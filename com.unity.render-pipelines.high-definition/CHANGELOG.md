@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed an issue where the Exposure Shader Graph node had clipped text. (case 1265057)
 
 ### Changed
+- Now Receive SSR also controls Receive SSGI on opaque objects.
 
 ## [10.1.0] - 2020-10-12
 

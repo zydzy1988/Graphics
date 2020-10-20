@@ -132,7 +132,6 @@ namespace UnityEditor.Rendering.HighDefinition
                                 using (new EditorGUI.DisabledScope(!useCustomValue))
                                 {
                                     PropertyField(m_RayLength, k_RayLengthText);
-                                    PropertyField(m_RayLength);
                                     PropertyField(m_ClampValue);
                                     PropertyField(m_FullResolution);
                                     PropertyField(m_UpscaleRadius);
@@ -169,7 +168,6 @@ namespace UnityEditor.Rendering.HighDefinition
                         using (new EditorGUI.DisabledScope(!useCustomValue))
                         {
                             PropertyField(m_RayLength, k_RayLengthText);
-                            PropertyField(m_RayLength);
                             PropertyField(m_ClampValue);
                             PropertyField(m_FullResolution);
                             PropertyField(m_UpscaleRadius);
