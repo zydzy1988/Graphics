@@ -11,7 +11,7 @@ def _cmd_base(project_folder, platform, utr_flags, editor):
         f'Xcopy /E /I \"com.unity.render-pipelines.universal\" \"{TEST_PROJECTS_DIR}/URP-Update-testing/{project_folder}/Packages/com.unity.render-pipelines.universal\" /Y',
         f'Xcopy /E /I \"com.unity.shadergraph\" \"{TEST_PROJECTS_DIR}/URP-Update-testing/{project_folder}/Packages/com.unity.shadergraph\" /Y',
         f'cd {TEST_PROJECTS_DIR}/URP-Update-testing/{project_folder} && unity-downloader-cli { get_unity_downloader_cli_cmd(editor, platform["os"]) } {"".join([f"-c {c} " for c in platform["components"]])} --wait --published-only',
-        f'cd {TEST_PROJECTS_DIR}/URP-Update-testing/{project_folder} && utr {" ".join(utr_flags)}'
+        f'cd {TEST_PROJECTS_DIR}/URP-Update-testing/{project_folder} && utr {" ".join(sorted(utr_flags))}'
     ]
 
 def cmd_editmode(project_folder, platform, api, test_platform, editor, build_config, color_space):
@@ -43,7 +43,7 @@ def cmd_standalone(project_folder, platform, api, test_platform, editor, build_c
 
 
     base = [f'curl -s {UTR_INSTALL_URL}.bat --output {TEST_PROJECTS_DIR}/{project_folder}/utr.bat']
-    base.append(f'cd {TEST_PROJECTS_DIR}/{project_folder} && utr {" ".join(utr_args)}')
+    base.append(f'cd {TEST_PROJECTS_DIR}/{project_folder} && utr {" ".join(sorted(utr_args))}')
     
     return base
 

@@ -17,7 +17,7 @@ def cmd_editmode(project_folder, platform, api, test_platform, editor, build_con
         f'unity-downloader-cli { get_unity_downloader_cli_cmd(editor, platform["os"]) } {"".join([f"-c {c} " for c in platform["components"]])}  --wait --published-only',
         f'curl -s {UTR_INSTALL_URL} --output utr',
         f'chmod +x ./utr',
-        f'./utr {" ".join(utr_args)}'
+        f'./utr {" ".join(sorted(utr_args))}'
      ]
 
     extra_cmds = extra_perf_cmd(project_folder)
@@ -42,7 +42,7 @@ def cmd_playmode(project_folder, platform, api, test_platform, editor, build_con
         f'unity-downloader-cli { get_unity_downloader_cli_cmd(editor, platform["os"]) } {"".join([f"-c {c} " for c in platform["components"]])}  --wait --published-only',
         f'curl -s {UTR_INSTALL_URL} --output utr',
         f'chmod +x ./utr',
-        f'./utr {" ".join(utr_args)}'
+        f'./utr {" ".join(sorted(utr_args))}'
      ]
     extra_cmds = extra_perf_cmd(project_folder)
     unity_config = install_unity_config(project_folder)
@@ -64,7 +64,7 @@ def cmd_standalone(project_folder, platform, api, test_platform, editor, build_c
     return [
         f'curl -s {UTR_INSTALL_URL} --output utr',        
         f'chmod +x ./utr',
-        f'./utr {" ".join(utr_args)}'
+        f'./utr {" ".join(sorted(utr_args))}'
     ]
 
         
@@ -81,7 +81,7 @@ def cmd_standalone_build(project_folder, platform, api, test_platform, editor, b
         f'unity-downloader-cli { get_unity_downloader_cli_cmd(editor, platform["os"]) } {"".join([f"-c {c} " for c in platform["components"]])}  --wait --published-only',
         f'curl -s {UTR_INSTALL_URL} --output utr',
         f'chmod +x ./utr',
-        f'./utr {" ".join(utr_args)}'
+        f'./utr {" ".join(sorted(utr_args))}'
      ]
     extra_cmds = extra_perf_cmd(project_folder)
     unity_config = install_unity_config(project_folder)

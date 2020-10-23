@@ -12,7 +12,7 @@ def _cmd_base(project_folder, platform, utr_flags, editor):
          set /p GIT_REVISIONDATE=<revdate.tmp
          echo %GIT_REVISIONDATE%
          del revdate.tmp
-         cd {TEST_PROJECTS_DIR}/{project_folder} && utr {" ".join(utr_flags)}''')
+         cd {TEST_PROJECTS_DIR}/{project_folder} && utr {" ".join(sorted(utr_flags))}''')
     ]
 
 
@@ -77,7 +77,7 @@ def cmd_standalone(project_folder, platform, api, test_platform, editor, build_c
     if project_folder.lower() == 'UniversalGraphicsTest'.lower():
         base.append('cd Tools && powershell -command ". .\\Unity.ps1; Set-ScreenResolution -width 1920 -Height 1080"')
     
-    base.append(f'cd {TEST_PROJECTS_DIR}/{project_folder} && utr {" ".join(utr_args)}')
+    base.append(f'cd {TEST_PROJECTS_DIR}/{project_folder} && utr {" ".join(sorted(utr_args))}')
     
     # if not test_platform['is_performance']:
     #     base.append(f'cd {TEST_PROJECTS_DIR}/{project_folder} && utr {" ".join(utr_args)}')
