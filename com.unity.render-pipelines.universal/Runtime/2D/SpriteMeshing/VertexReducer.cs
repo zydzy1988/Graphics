@@ -311,6 +311,11 @@ namespace UnityEngine.Experimental.Rendering.Universal
                 return 0;
         }
 
+        public int GetVertexCount()
+        {
+            return m_Outline.m_ListLength;
+        }
+
         void ProcessAddedVertices()
         {
             // Calculate removal costs for added vertices

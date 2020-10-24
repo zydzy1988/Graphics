@@ -213,10 +213,56 @@ namespace UnityEngine.Experimental.Rendering.Universal
             }
         }
 
-        static public void ReduceVertices(ShapeLibrary shapeLibrary, float minimumArea)
+        static public void ReduceVerticesByCount(ShapeLibrary shapeLibrary, int numberOfVertices)
         {
             if (shapeLibrary.m_ContourData.Count > 0)
             {
+                shapeLibrary.m_LineIntersectionManager.Clear();
+
+                // Add all our lines to the line intersection manager...
+                foreach (KeyValuePair<int, ContourData> dataKV in shapeLibrary.m_ContourData)
+                {
+                    List<Vector2> vertices = dataKV.Value.m_Vertices;
+
+                    Vector2 prevVertex = vertices[vertices.Count - 1];
+                    for (int i = 0; i < vertices.Count; i++)
+                    {
+                        Vector2 curVertex = vertices[i];
+                        shapeLibrary.m_LineIntersectionManager.AddLine(prevVertex, curVertex);
+                        prevVertex = curVertex;
+                    }
+                }
+
+                // Reduction step
+                List<int> contourDataRemovalList = new List<int>();
+                foreach (KeyValuePair<int, ContourData> dataKV in shapeLibrary.m_ContourData)
+                {
+                    float contourArea;
+                    VertexReducer vertexReducer = new VertexReducer();
+                    vertexReducer.Initialize(shapeLibrary, dataKV.Value.m_Vertices.ToArray(), dataKV.Value.m_UseReverseWinding, out contourArea);
+
+                    vertexReducer.SetConcaveReduction();
+                    bool canBeReduced = true;
+                    while (vertexReducer.GetVertexCount() > numberOfVertices && canBeReduced)
+                        canBeReduced = vertexReducer.ReduceShapeStep();
+
+                    vertexReducer.SetConvexReduction();
+                    canBeReduced = true;
+                    while (vertexReducer.GetSmallestArea() > numberOfVertices && canBeReduced)
+                        canBeReduced = vertexReducer.ReduceShapeStep();
+
+                    vertexReducer.GetReducedVertices(out dataKV.Value.m_Vertices);
+                }
+            }
+        }
+
+
+        static public void ReduceVerticesByArea(ShapeLibrary shapeLibrary, float minimumArea)
+        {
+            if (shapeLibrary.m_ContourData.Count > 0)
+            {
+                shapeLibrary.m_LineIntersectionManager.Clear();
+
                 // Add all our lines to the line intersection manager...
                 foreach (KeyValuePair<int, ContourData> dataKV in shapeLibrary.m_ContourData)
                 {
@@ -331,7 +377,7 @@ namespace UnityEngine.Experimental.Rendering.Universal
             MakeShapes(ref startingShape, ref startingContour, shapeLib, processedImageAlpha, minAlphaCutoff, true);        // Create opaque geometry
 
             AddImageBounds(shapeLib);
-            ReduceVertices(shapeLib, minimumArea);
+            ReduceVerticesByArea(shapeLib, minimumArea);
 
             processedImageAlpha.Dispose();
             unprocessedImageAlpha.Dispose();

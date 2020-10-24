@@ -46,6 +46,11 @@ namespace UnityEngine.Experimental.Rendering.Universal
             m_AllLines = new Dictionary<uint, Line>[m_WidthInCells + 1, m_HeightInCells + 1];
         }
 
+        public void Clear()
+        {
+            m_AllLines = new Dictionary<uint, Line>[m_WidthInCells + 1, m_HeightInCells + 1];
+        }
+
         public void DebugElements()
         {
             for (int y = 0; y < m_HeightInCells; y++)

@@ -7,9 +7,10 @@ using UnityEngine.U2D;
 using Unity;
 using Unity.Collections;
 using UnityEditor.Experimental.AssetImporters;
+using UnityEngine.Experimental.Rendering.Universal;
 
 
-namespace UnityEngine.Experimental.Rendering.Universal
+namespace UnityEditor.Experimental.Rendering.Universal
 {
     public class SpritePreprocessor : AssetPostprocessor
     {
@@ -76,12 +77,9 @@ namespace UnityEngine.Experimental.Rendering.Universal
                 allVertices.Add((vertices[i] - v3Pivot) * correctedPPU);
         }
 
-        void CreateSplitSpriteMesh(Sprite sprite, RectInt rect, Vector2 pivot, Vector2[][] customOutline, float pixelsPerUnit)
+        void CreateSplitSpriteMesh(ShapeLibrary shapeLibrary, Sprite sprite, RectInt rect, Vector2 pivot, Vector2[][] customOutline, float pixelsPerUnit)
         {
-            ShapeLibrary shapeLibrary = new ShapeLibrary();
             Texture2D texture = sprite.texture;
-
-            shapeLibrary.SetRegion(rect);
 
             GenerateMeshes.MakeShapes(shapeLibrary, customOutline, texture, 1, k_ReductionThreshold); // 2048 will give us a pretty good balance of verts to area. 4096 is the same or better area as previously and less than half the vertices.
 
@@ -123,6 +121,51 @@ namespace UnityEngine.Experimental.Rendering.Universal
             nativeIndices.Dispose();
         }
 
+
+        Vector2[] CreateShadowShape(ShapeLibrary shapeLibrary, int vertices, Vector2 pivot, float pixelsPerUnit)
+        {
+            Vector2[] shadowShape;
+
+            GenerateMeshes.ReduceVerticesByCount(shapeLibrary, vertices);
+
+            Contour largestOpaqueShape = null;
+            float   largestArea = float.MinValue;
+            foreach (Shape shape in shapeLibrary.m_Shapes)
+            {
+                if(shape.m_IsOpaque)
+                {
+                    foreach(Contour contour in shape.m_Contours)
+                    {
+                        float currentArea = contour.CalculateArea();
+                        if (largestArea < currentArea)
+                        {
+                            largestOpaqueShape = contour;
+                            largestArea = currentArea;
+                        }
+                    }
+               }
+            }
+
+            if (largestOpaqueShape != null)
+            {
+                Vector2[] retArray = new Vector2[largestOpaqueShape.m_ContourData.m_Vertices.Count];
+                float invPPU = 1 / pixelsPerUnit;
+
+                for(int i=0;i<retArray.Length;i++)
+                {
+                    retArray[i] = invPPU * (largestOpaqueShape.m_ContourData.m_Vertices[i] - pivot);
+                }
+
+                return retArray;
+            }
+
+
+
+
+
+            return new Vector2[0];
+        }
+
         void CreateMeshes(Sprite sprite, Vector2[][] outline, float spritePixelsPerUnit)
         {
             float scaleFromOriginalToCurrent = sprite.rect.width / (sprite.bounds.size.x * spritePixelsPerUnit);
@@ -136,7 +179,16 @@ namespace UnityEngine.Experimental.Rendering.Universal
             Vector2[][] transformedOutline = TransformOutline(outline, spriteCenter, scaleFromOriginalToCurrent);
 
             RectInt rect = new RectInt(new Vector2Int((int)sprite.rect.position.x, (int)sprite.rect.position.y), new Vector2Int((int)sprite.rect.size.x, (int)sprite.rect.size.y));
-            CreateSplitSpriteMesh(sprite, rect, sprite.pivot, transformedOutline, correctedPPU);
+
+
+            ShapeLibrary shapeLibrary = new ShapeLibrary();
+            shapeLibrary.SetRegion(rect);
+
+            CreateSplitSpriteMesh(shapeLibrary, sprite, rect, sprite.pivot, transformedOutline, correctedPPU);
+            Vector2[] shadowShape = CreateShadowShape(shapeLibrary, 16, sprite.pivot, spritePixelsPerUnit);
+
+
+            sprite.OverrideShadowShape(shadowShape);
         }
 
         void OnPostprocessSprites(Texture2D texture, Sprite[] sprites)

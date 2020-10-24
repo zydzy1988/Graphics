@@ -87,11 +87,24 @@ namespace UnityEngine.Experimental.Rendering.Universal
                 m_ApplyToSortingLayers = SetDefaultSortingLayers();
 
             Bounds bounds = new Bounds(transform.position, Vector3.one);
+            bool requiresDefaultShape = true;
             
             Renderer renderer = GetComponent<Renderer>();
             if (renderer != null)
             {
                 bounds = renderer.bounds;
+
+                SpriteRenderer spriteRenderer = renderer as SpriteRenderer;
+                if(spriteRenderer != null)
+                {
+                    Vector2[] shadowShape = spriteRenderer.sprite.GetShadowShape();
+                    m_ShapePath = new Vector3[shadowShape.Length];
+                    for (int i=0;i<shadowShape.Length;i++)
+                    {
+                        m_ShapePath[i] = shadowShape[i];
+                    }
+
+                }
             }
 #if USING_PHYSICS2D_MODULE
             else
@@ -102,17 +115,19 @@ namespace UnityEngine.Experimental.Rendering.Universal
             }
 #endif
 
-            Vector3 relOffset = bounds.center - transform.position;
-
-            if (m_ShapePath == null || m_ShapePath.Length == 0)
+            if (requiresDefaultShape)
             {
-                m_ShapePath = new Vector3[]
+                Vector3 relOffset = bounds.center - transform.position;
+                if (m_ShapePath == null || m_ShapePath.Length == 0)
                 {
-                    relOffset + new Vector3(-bounds.extents.x, -bounds.extents.y),
-                    relOffset + new Vector3(bounds.extents.x, -bounds.extents.y),
-                    relOffset + new Vector3(bounds.extents.x, bounds.extents.y),
-                    relOffset + new Vector3(-bounds.extents.x, bounds.extents.y)
-                };
+                    m_ShapePath = new Vector3[]
+                    {
+                        relOffset + new Vector3(-bounds.extents.x, -bounds.extents.y),
+                        relOffset + new Vector3(bounds.extents.x, -bounds.extents.y),
+                        relOffset + new Vector3(bounds.extents.x, bounds.extents.y),
+                        relOffset + new Vector3(-bounds.extents.x, bounds.extents.y)
+                    };
+                }
             }
         }
 
