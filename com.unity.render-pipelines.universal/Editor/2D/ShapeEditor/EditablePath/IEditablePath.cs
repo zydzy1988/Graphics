@@ -20,5 +20,7 @@ namespace UnityEditor.Experimental.Rendering.Universal.Path2D
         void InsertPoint(int index, ControlPoint controlPoint);
         void RemovePoint(int index);
         void Clear();
+        int  GetMinimumPointCount();
+        void SetDefaultShape();
     }
 }

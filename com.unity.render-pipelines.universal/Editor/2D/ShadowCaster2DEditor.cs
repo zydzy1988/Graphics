@@ -9,9 +9,33 @@ using UnityEngine.Experimental.Rendering.Universal;
 
 namespace UnityEditor.Experimental.Rendering.Universal
 {
+
+    internal class ShadowCasterPath : ScriptablePath
+    {
+        public override int GetMinimumPointCount()
+        {
+            return 4;
+        }
+
+        public override void SetDefaultShape()
+        {
+            Clear();
+            ShadowCaster2D shadowCaster = (ShadowCaster2D)owner;
+            Bounds bounds = shadowCaster.bounds();
+
+            AddPoint(new ControlPoint(bounds.min));
+            AddPoint(new ControlPoint(new Vector3(bounds.min.x, bounds.max.y)));
+            AddPoint(new ControlPoint(bounds.max));
+            AddPoint(new ControlPoint(new Vector3(bounds.max.x, bounds.min.y)));
+
+            base.SetDefaultShape();
+        }
+    }
+
+
     [CustomEditor(typeof(ShadowCaster2D))]
     [CanEditMultipleObjects]
-    internal class ShadowCaster2DEditor : PathComponentEditor<ScriptablePath>
+    internal class ShadowCaster2DEditor : PathComponentEditor<ShadowCasterPath>
     {
         [EditorTool("Edit Shadow Caster Shape", typeof(ShadowCaster2D))]
         class ShadowCaster2DShadowCasterShapeTool : ShadowCaster2DShapeTool { };

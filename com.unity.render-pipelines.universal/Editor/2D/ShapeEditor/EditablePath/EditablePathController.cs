@@ -109,16 +109,30 @@ namespace UnityEditor.Experimental.Rendering.Universal.Path2D
 
         public void RemoveSelectedPoints()
         {
-            var minPointCount = editablePath.isOpenEnded ? 2 : 3;
+            var minPointCount = editablePath.GetMinimumPointCount();
 
+            // We need a new editable path for shadows where we can handle the case of deleting all points. We need to add a handler to the base class...
             if (editablePath.pointCount > minPointCount)
             {
                 var indices = editablePath.selection.elements.OrderByDescending( i => i);
 
                 foreach (var index in indices)
+                {
                     if (editablePath.pointCount > minPointCount)
+                    {
                         editablePath.RemovePoint(index);
-
+                    }
+                    else
+                    {
+                        editablePath.SetDefaultShape();
+                        break;
+                    }
+                }
+                ClearSelection();
+            }
+            else
+            {
+                editablePath.SetDefaultShape();
                 ClearSelection();
             }
         }

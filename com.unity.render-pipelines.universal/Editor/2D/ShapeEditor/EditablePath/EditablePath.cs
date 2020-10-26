@@ -143,5 +143,14 @@ namespace UnityEditor.Experimental.Rendering.Universal.Path2D
 
             return changed;
         }
+
+        public virtual int GetMinimumPointCount()
+        {
+            return isOpenEnded ? 2 : 3;
+        }
+
+        public virtual void SetDefaultShape()
+        {
+        }
     }
 }

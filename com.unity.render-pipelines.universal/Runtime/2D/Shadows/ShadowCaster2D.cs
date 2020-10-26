@@ -24,8 +24,11 @@ namespace UnityEngine.Experimental.Rendering.Universal
         [SerializeField] Mesh m_Mesh;
         [SerializeField] int m_InstanceId;
 
+        Renderer m_Renderer;
+
         internal ShadowCasterGroup2D m_ShadowCasterGroup = null;
         internal ShadowCasterGroup2D m_PreviousShadowCasterGroup = null;
+
 
         internal Mesh mesh => m_Mesh;
         internal Vector3[] shapePath => m_ShapePath;
@@ -79,6 +82,22 @@ namespace UnityEngine.Experimental.Rendering.Universal
         internal bool IsShadowedLayer(int layer)
         {
             return m_ApplyToSortingLayers != null ? Array.IndexOf(m_ApplyToSortingLayers, layer) >= 0 : false;
+        }
+
+        internal Bounds bounds()
+        {
+            if (m_Renderer != null)
+            {
+                return m_Renderer.bounds;
+            }
+            else
+            {
+                Collider2D collider = GetComponent<Collider2D>();
+                if (collider != null)
+                    return collider.bounds;
+            }
+
+            return new Bounds(Vector3.zero, Vector3.one);
         }
 
         private void Awake()
@@ -150,8 +169,8 @@ namespace UnityEngine.Experimental.Rendering.Universal
 
         public void Update()
         {
-            Renderer renderer = GetComponent<Renderer>();
-            m_HasRenderer = renderer != null;
+            m_Renderer = GetComponent<Renderer>();
+            m_HasRenderer = m_Renderer != null;
 
             bool rebuildMesh = LightUtility.CheckForChange(m_ShapePathHash, ref m_PreviousPathHash);
             if (rebuildMesh)
