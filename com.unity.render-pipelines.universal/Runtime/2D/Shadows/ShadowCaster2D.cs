@@ -14,7 +14,6 @@ namespace UnityEngine.Experimental.Rendering.Universal
     [AddComponentMenu("Rendering/2D/Shadow Caster 2D (Experimental)")]
     public class ShadowCaster2D : ShadowCasterGroup2D
     {
-        [SerializeField] bool m_HasRenderer = false;
         [SerializeField] bool m_UseRendererSilhouette = true;
         [SerializeField] bool m_CastsShadows = true;
         [SerializeField] bool m_SelfShadows = false;
@@ -45,7 +44,7 @@ namespace UnityEngine.Experimental.Rendering.Universal
         public bool useRendererSilhouette
         {
             set { m_UseRendererSilhouette = value; }
-            get { return m_UseRendererSilhouette && m_HasRenderer;  }
+            get { return m_UseRendererSilhouette;  }
         }
 
         /// <summary>
@@ -82,22 +81,6 @@ namespace UnityEngine.Experimental.Rendering.Universal
         internal bool IsShadowedLayer(int layer)
         {
             return m_ApplyToSortingLayers != null ? Array.IndexOf(m_ApplyToSortingLayers, layer) >= 0 : false;
-        }
-
-        internal Bounds bounds()
-        {
-            if (m_Renderer != null)
-            {
-                return m_Renderer.bounds;
-            }
-            else
-            {
-                Collider2D collider = GetComponent<Collider2D>();
-                if (collider != null)
-                    return collider.bounds;
-            }
-
-            return new Bounds(Vector3.zero, Vector3.one);
         }
 
         private void Awake()
@@ -169,9 +152,6 @@ namespace UnityEngine.Experimental.Rendering.Universal
 
         public void Update()
         {
-            m_Renderer = GetComponent<Renderer>();
-            m_HasRenderer = m_Renderer != null;
-
             bool rebuildMesh = LightUtility.CheckForChange(m_ShapePathHash, ref m_PreviousPathHash);
             if (rebuildMesh)
                 ShadowUtility.GenerateShadowMesh(m_Mesh, m_ShapePath);

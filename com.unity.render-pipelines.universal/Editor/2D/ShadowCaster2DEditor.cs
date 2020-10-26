@@ -12,6 +12,25 @@ namespace UnityEditor.Experimental.Rendering.Universal
 
     internal class ShadowCasterPath : ScriptablePath
     {
+        internal Bounds GetBounds()
+        {
+            ShadowCaster2D shadowCaster = (ShadowCaster2D)owner;
+            Renderer m_Renderer = shadowCaster.GetComponent<Renderer>();
+            if (m_Renderer != null)
+            {
+                return m_Renderer.bounds;
+            }
+            else
+            {
+                Collider2D collider = shadowCaster.GetComponent<Collider2D>();
+                if (collider != null)
+                    return collider.bounds;
+            }
+
+            return new Bounds(shadowCaster.transform.position, Vector3.one);
+        }
+
+
         public override int GetMinimumPointCount()
         {
             return 4;
@@ -20,8 +39,7 @@ namespace UnityEditor.Experimental.Rendering.Universal
         public override void SetDefaultShape()
         {
             Clear();
-            ShadowCaster2D shadowCaster = (ShadowCaster2D)owner;
-            Bounds bounds = shadowCaster.bounds();
+            Bounds bounds = GetBounds();
 
             AddPoint(new ControlPoint(bounds.min));
             AddPoint(new ControlPoint(new Vector3(bounds.min.x, bounds.max.y)));
@@ -48,7 +66,6 @@ namespace UnityEditor.Experimental.Rendering.Universal
             public static GUIContent sortingLayerPrefixLabel = EditorGUIUtility.TrTextContent("Target Sorting Layers", "Apply shadows to the specified sorting layers.");
         }
 
-        SerializedProperty m_HasRenderer;
         SerializedProperty m_UseRendererSilhouette;
         SerializedProperty m_CastsShadows;
         SerializedProperty m_SelfShadows;
@@ -63,7 +80,6 @@ namespace UnityEditor.Experimental.Rendering.Universal
             m_UseRendererSilhouette = serializedObject.FindProperty("m_UseRendererSilhouette");
             m_SelfShadows = serializedObject.FindProperty("m_SelfShadows");
             m_CastsShadows = serializedObject.FindProperty("m_CastsShadows");
-            m_HasRenderer = serializedObject.FindProperty("m_HasRenderer"); 
 
             m_SortingLayerDropDown = new SortingLayerDropDown();
             m_SortingLayerDropDown.OnEnable(serializedObject, "m_ApplyToSortingLayers");
@@ -100,11 +116,27 @@ namespace UnityEditor.Experimental.Rendering.Universal
                 ShadowCaster2DSceneGUI();
         }
 
+        public bool HasRenderer()
+        {
+            if(targets != null)
+            {
+                for(int i=0;i<targets.Length;i++)
+                {
+                    ShadowCaster2D shadowCaster = (ShadowCaster2D)targets[i];
+                    Renderer renderer = shadowCaster.GetComponent<Renderer>();
+                    if (renderer != null)
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
 
-            using (new EditorGUI.DisabledScope(!m_HasRenderer.boolValue))  // Done to support multiedit
+            using (new EditorGUI.DisabledScope(!HasRenderer()))  // Done to support multiedit
             {
                 EditorGUILayout.PropertyField(m_UseRendererSilhouette, Styles.shadowMode);  
             }
