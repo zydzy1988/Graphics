@@ -374,7 +374,17 @@ namespace UnityEngine.Experimental.Rendering.Universal
                 if (!Light2DManager.GetGlobalColor(layerToRender, i, out var clearColor))
                     clearColor = Color.black;
 
-                var identifier =  layerBatch.GetRTId(cmd, rtDesc, i);
+                bool anyLights = (layerBatch.lightStats.blendStyleHasLights & (uint)(1 << i)) != 0;
+                RenderTargetIdentifier identifier;
+                if (anyLights)
+                    identifier = layerBatch.GetRTId(cmd, rtDesc, i);
+                else
+                {
+                    // No lights -- create tiny texture
+                    var desc = rtDesc;
+                    desc.width = desc.height = 4;
+                    identifier = layerBatch.GetRTId(cmd, desc, i);
+                }
 
                 cmd.SetRenderTarget(identifier,
                     RenderBufferLoadAction.DontCare,
@@ -383,14 +393,17 @@ namespace UnityEngine.Experimental.Rendering.Universal
                     RenderBufferStoreAction.DontCare);
                 cmd.ClearRenderTarget(false, true, clearColor);
 
-                RenderLightSet(
-                    pass, renderingData,
-                    i,
-                    cmd,
-                    layerToRender,
-                    identifier,
-                    pass.rendererData.lightCullResult.visibleLights
-                );
+                if (anyLights)
+                {
+                    RenderLightSet(
+                        pass, renderingData,
+                        i,
+                        cmd,
+                        layerToRender,
+                        identifier,
+                        pass.rendererData.lightCullResult.visibleLights
+                    );
+                }
 
                 cmd.EndSample(sampleName);
             }

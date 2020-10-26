@@ -136,6 +136,14 @@ namespace UnityEngine.Experimental.Rendering.Universal
                 // Renderer within this range share the same set of lights so they should be rendered together.
                 var sortingLayerRange = new SortingLayerRange(lowerBound, upperBound);
 
+                // Determine which blend styles have lights rendered
+                lightStats.blendStyleHasLights = 0;
+                foreach (var light in lightCullResult.visibleLights)
+                {
+                    if (light != null && light.lightType != Light2D.LightType.Global && light.IsLitLayer(layerToRender))
+                        lightStats.blendStyleHasLights |= 1u << light.blendStyleIndex;
+                }
+
                 layerBatch.startLayerID = layerToRender;
                 layerBatch.endLayerValue = endLayerValue;
                 layerBatch.layerRange = sortingLayerRange;

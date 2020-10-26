@@ -12,6 +12,7 @@ namespace UnityEngine.Experimental.Rendering.Universal
         public int totalNormalMapUsage;
         public int totalVolumetricUsage;
         public uint blendStylesUsed;
+        public uint blendStyleHasLights;
     }
 
     internal interface ILight2DCullResult
