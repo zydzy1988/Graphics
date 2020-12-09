@@ -28,7 +28,8 @@
 #define _WorldSpaceCameraPos unity_StereoWorldSpaceCameraPos[unity_StereoEyeIndex]
 #endif
 
-#define UNITY_LIGHTMODEL_AMBIENT (glstate_lightmodel_ambient * 2)
+float4 _AmbientColor;
+#define UNITY_LIGHTMODEL_AMBIENT (_AmbientColor)
 
 // ----------------------------------------------------------------------------
 

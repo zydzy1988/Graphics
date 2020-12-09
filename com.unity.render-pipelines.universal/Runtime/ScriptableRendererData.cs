@@ -155,7 +155,7 @@ namespace UnityEngine.Rendering.Universal
                 m_RendererFeatureMap.AddRange(new long[m_RendererFeatures.Count]);
             }
 
-            for (var i = 0; i < rendererFeatures.Count; i++)
+            for (var i = 0; i < m_RendererFeatures.Count; i++)
             {
                 if(m_RendererFeatures[i] == null) continue;
                 if (!AssetDatabase.TryGetGUIDAndLocalFileIdentifier(m_RendererFeatures[i], out var guid,

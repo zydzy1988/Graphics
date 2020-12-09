@@ -30,6 +30,7 @@ namespace UnityEngine.Rendering.Universal
         {
             public static int _GlossyEnvironmentColor;
             public static int _SubtractiveShadowColor;
+            public static int _AmbientColor;
 
             public static int _Time;
             public static int _SinTime;
@@ -113,6 +114,7 @@ namespace UnityEngine.Rendering.Universal
 
             PerFrameBuffer._GlossyEnvironmentColor = Shader.PropertyToID("_GlossyEnvironmentColor");
             PerFrameBuffer._SubtractiveShadowColor = Shader.PropertyToID("_SubtractiveShadowColor");
+            PerFrameBuffer._AmbientColor = Shader.PropertyToID("_AmbientColor");
 
             PerFrameBuffer._Time = Shader.PropertyToID("_Time");
             PerFrameBuffer._SinTime = Shader.PropertyToID("_SinTime");
@@ -929,7 +931,8 @@ namespace UnityEngine.Rendering.Universal
             Color linearGlossyEnvColor = new Color(ambientSH[0, 0], ambientSH[1, 0], ambientSH[2, 0]) * RenderSettings.reflectionIntensity;
             Color glossyEnvColor = CoreUtils.ConvertLinearToActiveColorSpace(linearGlossyEnvColor);
             Shader.SetGlobalVector(PerFrameBuffer._GlossyEnvironmentColor, glossyEnvColor);
-
+            var ambientColor = CoreUtils.ConvertSRGBToActiveColorSpace(RenderSettings.ambientLight);
+            Shader.SetGlobalVector(PerFrameBuffer._AmbientColor, ambientColor);
             // Used when subtractive mode is selected
             Shader.SetGlobalVector(PerFrameBuffer._SubtractiveShadowColor, CoreUtils.ConvertSRGBToActiveColorSpace(RenderSettings.subtractiveShadowColor));
         }
