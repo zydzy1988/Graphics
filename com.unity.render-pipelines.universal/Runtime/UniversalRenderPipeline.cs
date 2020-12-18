@@ -931,8 +931,7 @@ namespace UnityEngine.Rendering.Universal
             Color linearGlossyEnvColor = new Color(ambientSH[0, 0], ambientSH[1, 0], ambientSH[2, 0]) * RenderSettings.reflectionIntensity;
             Color glossyEnvColor = CoreUtils.ConvertLinearToActiveColorSpace(linearGlossyEnvColor);
             Shader.SetGlobalVector(PerFrameBuffer._GlossyEnvironmentColor, glossyEnvColor);
-            var ambientColor = CoreUtils.ConvertSRGBToActiveColorSpace(RenderSettings.ambientLight);
-            Shader.SetGlobalVector(PerFrameBuffer._AmbientColor, ambientColor);
+            Shader.SetGlobalVector(PerFrameBuffer._AmbientColor, RenderSettings.ambientLight);
             // Used when subtractive mode is selected
             Shader.SetGlobalVector(PerFrameBuffer._SubtractiveShadowColor, CoreUtils.ConvertSRGBToActiveColorSpace(RenderSettings.subtractiveShadowColor));
         }
