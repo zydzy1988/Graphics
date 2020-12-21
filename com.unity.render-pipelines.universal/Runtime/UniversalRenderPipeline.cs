@@ -644,7 +644,8 @@ namespace UnityEngine.Rendering.Universal
             var settings = asset;
             cameraData.camera = camera;
 
-            bool anyShadowsEnabled = settings.supportsMainLightShadows || settings.supportsAdditionalLightShadows;
+            bool isUICamera = additionalCameraData == null ? false : additionalCameraData.renderType == CameraRenderType.UI;
+            bool anyShadowsEnabled = (settings.supportsMainLightShadows || settings.supportsAdditionalLightShadows) && !isUICamera;
             cameraData.maxShadowDistance = Mathf.Min(settings.shadowDistance, camera.farClipPlane);
             cameraData.maxShadowDistance = (anyShadowsEnabled && cameraData.maxShadowDistance >= camera.nearClipPlane) ?
                 cameraData.maxShadowDistance : 0.0f;
@@ -670,7 +671,7 @@ namespace UnityEngine.Rendering.Universal
             else if (additionalCameraData != null)
             {
                 cameraData.renderType = additionalCameraData.renderType;
-                cameraData.clearDepth = (additionalCameraData.renderType != CameraRenderType.Base) ? additionalCameraData.clearDepth : true;
+                cameraData.clearDepth = (additionalCameraData.renderType == CameraRenderType.Overlay) ? additionalCameraData.clearDepth : true;
                 cameraData.postProcessEnabled = additionalCameraData.renderPostProcessing;
                 cameraData.maxShadowDistance = (additionalCameraData.renderShadows) ? cameraData.maxShadowDistance : 0.0f;
                 cameraData.requiresDepthTexture = additionalCameraData.requiresDepthTexture;
@@ -689,7 +690,7 @@ namespace UnityEngine.Rendering.Universal
 
             // Disable depth and color copy. We should add it in the renderer instead to avoid performance pitfalls
             // of camera stacking breaking render pass execution implicitly.
-            if (cameraData.renderType == CameraRenderType.Overlay)
+            if (cameraData.renderType == CameraRenderType.Overlay || cameraData.renderType == CameraRenderType.UI)
             {
                 cameraData.requiresDepthTexture = false;
                 cameraData.requiresOpaqueTexture = false;

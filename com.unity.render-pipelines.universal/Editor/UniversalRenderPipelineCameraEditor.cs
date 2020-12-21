@@ -228,7 +228,7 @@ namespace UnityEditor.Rendering.Universal
             m_AdditionalCameraDataCameras = o.Find("m_Cameras");
 
             var camType = (CameraRenderType)m_AdditionalCameraDataCameraTypeProp.intValue;
-            if (camType == CameraRenderType.Base)
+            if (camType == CameraRenderType.Base || camType == CameraRenderType.UI)
             {
                 m_LayerList = new ReorderableList(m_AdditionalCameraDataSO, m_AdditionalCameraDataCameras, true, false, true, true);
 
@@ -450,7 +450,7 @@ namespace UnityEditor.Rendering.Universal
             DrawEnvironmentSettings(camType);
 
             // Settings only relevant to base cameras
-            if (camType == CameraRenderType.Base)
+            if (camType == CameraRenderType.Base || camType == CameraRenderType.UI)
             {
                 DrawOutputSettings();
                 DrawStackSettings();
@@ -534,7 +534,7 @@ namespace UnityEditor.Rendering.Universal
             m_EnvironmentSettingsFoldout.value = EditorGUILayout.BeginFoldoutHeaderGroup(m_EnvironmentSettingsFoldout.value, Styles.environmentSettingsText);
             if (m_EnvironmentSettingsFoldout.value)
             {
-                if (camType == CameraRenderType.Base)
+                if (camType == CameraRenderType.Base || camType == CameraRenderType.UI)
                 {
                     DrawClearFlags();
 
@@ -563,7 +563,7 @@ namespace UnityEditor.Rendering.Universal
             {
                 DrawRenderer();
 
-                if (camType == CameraRenderType.Base)
+                if (camType == CameraRenderType.Base || camType == CameraRenderType.UI)
                 {
                     DrawPostProcessing();
                 }
@@ -576,7 +576,7 @@ namespace UnityEditor.Rendering.Universal
 
                 DrawRenderShadows();
 
-                if (camType == CameraRenderType.Base)
+                if (camType == CameraRenderType.Base || camType == CameraRenderType.UI)
                 {
                     DrawPriority();
                     DrawOpaqueTexture();

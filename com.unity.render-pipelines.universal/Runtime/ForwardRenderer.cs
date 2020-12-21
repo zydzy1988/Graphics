@@ -199,7 +199,7 @@ namespace UnityEngine.Rendering.Universal
             createDepthTexture |= (renderingData.cameraData.renderType == CameraRenderType.Base && !renderingData.resolveFinalTarget);
 
             // Configure all settings require to start a new camera stack (base camera only)
-            if (cameraData.renderType == CameraRenderType.Base)
+            if (cameraData.renderType == CameraRenderType.Base || cameraData.renderType == CameraRenderType.UI)
             {
                 m_ActiveCameraColorAttachment = (createColorTexture) ? m_CameraColorAttachment : RenderTargetHandle.CameraTarget;
                 m_ActiveCameraDepthAttachment = (createDepthTexture) ? m_CameraDepthAttachment : RenderTargetHandle.CameraTarget;
@@ -273,8 +273,8 @@ namespace UnityEngine.Rendering.Universal
 #pragma warning restore 0618
 #endif
 
-            bool isOverlayCamera = cameraData.renderType == CameraRenderType.Overlay;
-            if (camera.clearFlags == CameraClearFlags.Skybox && RenderSettings.skybox != null && !isOverlayCamera)
+            bool noNeedDrawSkyBoxCamera = cameraData.renderType == CameraRenderType.Overlay || cameraData.renderType == CameraRenderType.UI;
+            if (camera.clearFlags == CameraClearFlags.Skybox && RenderSettings.skybox != null && !noNeedDrawSkyBoxCamera)
                 EnqueuePass(m_DrawSkyboxPass);
 
             // If a depth texture was created we necessarily need to copy it, otherwise we could have render it to a renderbuffer

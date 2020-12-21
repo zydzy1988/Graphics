@@ -60,6 +60,7 @@ namespace UnityEngine.Rendering.Universal
     {
         Base,
         Overlay,
+        UI
     }
 
     /// <summary>
@@ -261,7 +262,7 @@ namespace UnityEngine.Rendering.Universal
         {
             get
             {
-                if (renderType != CameraRenderType.Base)
+                if (renderType != CameraRenderType.Base && renderType != CameraRenderType.UI)
                 {
                     var camera = gameObject.GetComponent<Camera>();
                     Debug.LogWarning(string.Format("{0}: This camera is of {1} type. Only Base cameras can have a camera stack.", camera.name, renderType));
@@ -416,7 +417,7 @@ namespace UnityEngine.Rendering.Universal
             string gizmoName = "";
             Color tint = Color.white;
 
-            if (m_CameraType == CameraRenderType.Base)
+            if (m_CameraType == CameraRenderType.Base || m_CameraType == CameraRenderType.UI)
             {
                 gizmoName = $"{path}Camera_Base.png";
             }
