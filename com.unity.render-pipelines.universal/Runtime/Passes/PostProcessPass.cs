@@ -802,7 +802,7 @@ namespace UnityEngine.Rendering.Universal.Internal
 
             // Pre-filtering parameters
             float clamp = m_Bloom.clamp.value;
-            float threshold = Mathf.GammaToLinearSpace(m_Bloom.threshold.value);
+            float threshold = m_Bloom.threshold.value;
             float thresholdKnee = threshold * 0.5f; // Hardcoded soft knee
 
             // Material setup
@@ -840,7 +840,6 @@ namespace UnityEngine.Rendering.Universal.Internal
                 cmd.Blit(mipUp, mipDown, bloomMaterial, 2);
                 lastDown = mipDown;
             }
-
             // Upsample (bilinear by default, HQ filtering does bicubic instead
             for (int i = mipCount - 2; i >= 0; i--)
             {
