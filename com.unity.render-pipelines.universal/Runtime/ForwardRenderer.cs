@@ -1,3 +1,4 @@
+using UnityEngine.Experimental.Rendering.Universal;
 using UnityEngine.Rendering.Universal.Internal;
 
 namespace UnityEngine.Rendering.Universal
@@ -18,7 +19,7 @@ namespace UnityEngine.Rendering.Universal
         AdditionalLightsShadowCasterPass m_AdditionalLightsShadowCasterPass;
         ScreenSpaceShadowResolvePass m_ScreenSpaceShadowResolvePass;
         DrawObjectsPass m_RenderOpaqueForwardPass;
-        DrawClipDepthObjectsPass m_RenderOpaqueClipDepthForwardPass;
+        RenderObjectsPass m_RenderOpaqueClipDepthForwardPass;
         DrawSkyboxPass m_DrawSkyboxPass;
         CopyDepthPass m_CopyDepthPass;
         CopyColorPass m_CopyColorPass;
@@ -85,7 +86,7 @@ namespace UnityEngine.Rendering.Universal
             m_CopyColorPass = new CopyColorPass(RenderPassEvent.BeforeRenderingTransparents, m_SamplingMaterial);
             m_TransparentSettingsPass = new TransparentSettingsPass(RenderPassEvent.BeforeRenderingTransparents, data.shadowTransparentReceive);
             m_RenderTransparentForwardPass = new DrawObjectsPass("Render Transparents", false, RenderPassEvent.BeforeRenderingTransparents, RenderQueueRange.transparent, data.transparentLayerMask, m_DefaultStencilState, stencilData.stencilReference);
-            m_RenderOpaqueClipDepthForwardPass = new DrawClipDepthObjectsPass("Render Clip Depth Opaques", RenderPassEvent.AfterRenderingTransparents, RenderQueueRange.opaque, data.opaqueLayerMask, m_DefaultStencilState, stencilData.stencilReference);
+            m_RenderOpaqueClipDepthForwardPass = new RenderObjectsPass("Render Clip Depth Opaques", RenderPassEvent.AfterRenderingTransparents, new string[] { "ClipDepth" }, RenderQueueType.Opaque, data.opaqueLayerMask, new RenderObjects.CustomCameraSettings { overrideCamera = false });
             m_RenderTransparentAfterClipDepthFowardPass = new DrawObjectsPass("Render Transparent After Clip Depth", false, RenderPassEvent.AfterRenderingTransparents, RenderQueueRange.transparent, data.transparentAfterClipDepthLayerMask, m_DefaultStencilState, stencilData.stencilReference);
             m_OnRenderObjectCallbackPass = new InvokeOnRenderObjectCallbackPass(RenderPassEvent.BeforeRenderingPostProcessing);
             m_PostProcessPass = new PostProcessPass(RenderPassEvent.BeforeRenderingPostProcessing, data.postProcessData, m_BlitMaterial);
