@@ -18,11 +18,13 @@ namespace UnityEngine.Rendering.Universal
         AdditionalLightsShadowCasterPass m_AdditionalLightsShadowCasterPass;
         ScreenSpaceShadowResolvePass m_ScreenSpaceShadowResolvePass;
         DrawObjectsPass m_RenderOpaqueForwardPass;
+        DrawClipDepthObjectsPass m_RenderOpaqueClipDepthForwardPass;
         DrawSkyboxPass m_DrawSkyboxPass;
         CopyDepthPass m_CopyDepthPass;
         CopyColorPass m_CopyColorPass;
         TransparentSettingsPass m_TransparentSettingsPass;
         DrawObjectsPass m_RenderTransparentForwardPass;
+        DrawObjectsPass m_RenderTransparentAfterClipDepthFowardPass;
         InvokeOnRenderObjectCallbackPass m_OnRenderObjectCallbackPass;
         PostProcessPass m_PostProcessPass;
         PostProcessPass m_FinalPostProcessPass;
@@ -83,12 +85,13 @@ namespace UnityEngine.Rendering.Universal
             m_CopyColorPass = new CopyColorPass(RenderPassEvent.BeforeRenderingTransparents, m_SamplingMaterial);
             m_TransparentSettingsPass = new TransparentSettingsPass(RenderPassEvent.BeforeRenderingTransparents, data.shadowTransparentReceive);
             m_RenderTransparentForwardPass = new DrawObjectsPass("Render Transparents", false, RenderPassEvent.BeforeRenderingTransparents, RenderQueueRange.transparent, data.transparentLayerMask, m_DefaultStencilState, stencilData.stencilReference);
+            m_RenderOpaqueClipDepthForwardPass = new DrawClipDepthObjectsPass("Render Clip Depth Opaques", RenderPassEvent.AfterRenderingTransparents, RenderQueueRange.opaque, data.opaqueLayerMask, m_DefaultStencilState, stencilData.stencilReference);
+            m_RenderTransparentAfterClipDepthFowardPass = new DrawObjectsPass("Render Transparent After Clip Depth", false, RenderPassEvent.AfterRenderingTransparents, RenderQueueRange.transparent, data.transparentAfterClipDepthLayerMask, m_DefaultStencilState, stencilData.stencilReference);
             m_OnRenderObjectCallbackPass = new InvokeOnRenderObjectCallbackPass(RenderPassEvent.BeforeRenderingPostProcessing);
             m_PostProcessPass = new PostProcessPass(RenderPassEvent.BeforeRenderingPostProcessing, data.postProcessData, m_BlitMaterial);
             m_FinalPostProcessPass = new PostProcessPass(RenderPassEvent.AfterRendering + 1, data.postProcessData, m_BlitMaterial);
             m_CapturePass = new CapturePass(RenderPassEvent.AfterRendering);
             m_FinalBlitPass = new FinalBlitPass(RenderPassEvent.AfterRendering + 1, m_BlitMaterial);
-
 #if POST_PROCESSING_STACK_2_0_0_OR_NEWER
             m_OpaquePostProcessPassCompat = new PostProcessPassCompat(RenderPassEvent.BeforeRenderingOpaques, true);
             m_PostProcessPassCompat = new PostProcessPassCompat(RenderPassEvent.BeforeRenderingPostProcessing);
@@ -147,6 +150,7 @@ namespace UnityEngine.Rendering.Universal
                 EnqueuePass(m_RenderOpaqueForwardPass);
                 EnqueuePass(m_DrawSkyboxPass);
                 EnqueuePass(m_RenderTransparentForwardPass);
+                EnqueuePass(m_RenderTransparentAfterClipDepthFowardPass);
                 return;
             }
 
@@ -299,6 +303,12 @@ namespace UnityEngine.Rendering.Universal
             }
 
             EnqueuePass(m_RenderTransparentForwardPass);
+
+            // Clip depth pass need depth texture to work.
+            if (requiresDepthTexture)
+                EnqueuePass(m_RenderOpaqueClipDepthForwardPass);
+
+            EnqueuePass(m_RenderTransparentAfterClipDepthFowardPass);
             EnqueuePass(m_OnRenderObjectCallbackPass);
 
             bool lastCameraInTheStack = renderingData.resolveFinalTarget;

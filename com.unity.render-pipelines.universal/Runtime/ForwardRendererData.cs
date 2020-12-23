@@ -57,6 +57,7 @@ namespace UnityEngine.Rendering.Universal
 
         [SerializeField] LayerMask m_OpaqueLayerMask = -1;
         [SerializeField] LayerMask m_TransparentLayerMask = -1;
+        [SerializeField] LayerMask m_TransparentAfterClipDepthLayerMask = -1;
         [SerializeField] StencilStateData m_DefaultStencilState = new StencilStateData();
         [SerializeField] bool m_ShadowTransparentReceive = true;
 
@@ -82,6 +83,16 @@ namespace UnityEngine.Rendering.Universal
             {
                 SetDirty();
                 m_OpaqueLayerMask = value;
+            }
+        }
+
+        public LayerMask transparentAfterClipDepthLayerMask
+        {
+            get => m_TransparentAfterClipDepthLayerMask;
+            set
+            {
+                SetDirty();
+                m_TransparentAfterClipDepthLayerMask = value;
             }
         }
 
