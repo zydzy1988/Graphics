@@ -20,6 +20,7 @@ namespace UnityEngine.Rendering.Universal
         ScreenSpaceShadowResolvePass m_ScreenSpaceShadowResolvePass;
         DrawObjectsPass m_RenderOpaqueForwardPass;
         RenderObjectsPass m_RenderOpaqueClipDepthForwardPass;
+        RenderObjectsPass m_RenderOpaqueOutlineForwardPass;
         DrawSkyboxPass m_DrawSkyboxPass;
         CopyDepthPass m_CopyDepthPass;
         CopyColorPass m_CopyColorPass;
@@ -81,6 +82,7 @@ namespace UnityEngine.Rendering.Universal
             m_ScreenSpaceShadowResolvePass = new ScreenSpaceShadowResolvePass(RenderPassEvent.BeforeRenderingPrepasses, m_ScreenspaceShadowsMaterial);
             m_ColorGradingLutPass = new ColorGradingLutPass(RenderPassEvent.BeforeRenderingPrepasses, data.postProcessData);
             m_RenderOpaqueForwardPass = new DrawObjectsPass("Render Opaques", true, RenderPassEvent.BeforeRenderingOpaques, RenderQueueRange.opaque, data.opaqueLayerMask, m_DefaultStencilState, stencilData.stencilReference);
+            m_RenderOpaqueOutlineForwardPass = new RenderObjectsPass("Render Opaques Outline", RenderPassEvent.AfterRenderingOpaques, new string[] { "Outline" }, RenderQueueType.Opaque, data.opaqueLayerMask, new RenderObjects.CustomCameraSettings { overrideCamera = false });
             m_CopyDepthPass = new CopyDepthPass(RenderPassEvent.AfterRenderingSkybox, m_CopyDepthMaterial);
             m_DrawSkyboxPass = new DrawSkyboxPass(RenderPassEvent.BeforeRenderingSkybox);
             m_CopyColorPass = new CopyColorPass(RenderPassEvent.BeforeRenderingTransparents, m_SamplingMaterial);
@@ -199,6 +201,9 @@ namespace UnityEngine.Rendering.Universal
             bool createColorTexture = RequiresIntermediateColorTexture(ref renderingData, cameraTargetDescriptor) ||
                 (rendererFeatures.Count != 0 && !isRunningHololens);
 
+            if (cameraData.renderType == CameraRenderType.UI)
+                createColorTexture = false;
+
             // If camera requires depth and there's no depth pre-pass we create a depth texture that can be read later by effect requiring it.
             bool createDepthTexture = cameraData.requiresDepthTexture && !requiresDepthPrepass;
             createDepthTexture |= (renderingData.cameraData.renderType == CameraRenderType.Base && !renderingData.resolveFinalTarget);
@@ -263,6 +268,8 @@ namespace UnityEngine.Rendering.Universal
             }
 
             EnqueuePass(m_RenderOpaqueForwardPass);
+            if (cameraData.renderType != CameraRenderType.UI)
+                EnqueuePass(m_RenderOpaqueOutlineForwardPass);
 
 #if POST_PROCESSING_STACK_2_0_0_OR_NEWER
 #pragma warning disable 0618 // Obsolete
@@ -305,11 +312,13 @@ namespace UnityEngine.Rendering.Universal
 
             EnqueuePass(m_RenderTransparentForwardPass);
 
-            // Clip depth pass need depth texture to work.
-            if (requiresDepthTexture)
-                EnqueuePass(m_RenderOpaqueClipDepthForwardPass);
-
-            EnqueuePass(m_RenderTransparentAfterClipDepthFowardPass);
+            if (cameraData.renderType != CameraRenderType.UI)
+            {
+                // Clip depth pass need depth texture to work.
+                if (requiresDepthTexture)
+                    EnqueuePass(m_RenderOpaqueClipDepthForwardPass);
+                EnqueuePass(m_RenderTransparentAfterClipDepthFowardPass);
+            }
             EnqueuePass(m_OnRenderObjectCallbackPass);
 
             bool lastCameraInTheStack = renderingData.resolveFinalTarget;
