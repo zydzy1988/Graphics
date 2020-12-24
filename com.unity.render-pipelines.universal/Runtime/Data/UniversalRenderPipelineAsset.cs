@@ -568,11 +568,13 @@ namespace UnityEngine.Rendering.Universal
         public bool supportsMainLightShadows
         {
             get { return m_MainLightShadowsSupported; }
+            set { m_MainLightShadowsSupported = value; }
         }
 
         public int mainLightShadowmapResolution
         {
             get { return (int)m_MainLightShadowmapResolution; }
+            set { m_MainLightShadowmapResolution = (ShadowResolution)value; }
         }
 
         public LightRenderingMode additionalLightsRenderingMode
