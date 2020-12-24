@@ -579,12 +579,12 @@ namespace UnityEngine.Rendering.Universal.Internal
 
         void PrepareBokehKernel()
         {
-            const int kRings = 4;
-            const int kPointsPerRing = 7;
+            const int kRings = 3;
+            const int kPointsPerRing = 5;
 
             // Check the existing array
             if (m_BokehKernel == null)
-                m_BokehKernel = new Vector4[42];
+                m_BokehKernel = new Vector4[15];
 
             // Fill in sample points (concentric circles transformed to rotated N-Gon)
             int idx = 0;
@@ -630,8 +630,8 @@ namespace UnityEngine.Rendering.Universal.Internal
         void DoBokehDepthOfField(CommandBuffer cmd, int source, int destination, Rect pixelRect)
         {
             var material = m_Materials.bokehDepthOfField;
-            int wh = m_Descriptor.width / 2;
-            int hh = m_Descriptor.height / 2;
+            int wh = m_Descriptor.width / 4;
+            int hh = m_Descriptor.height / 4;
 
             // "A Lens and Aperture Camera Model for Synthetic Image Generation" [Potmesil81]
             float F = m_DepthOfField.focalLength.value / 1000f;
@@ -654,7 +654,7 @@ namespace UnityEngine.Rendering.Universal.Internal
             cmd.SetGlobalVectorArray(ShaderConstants._BokehKernel, m_BokehKernel);
 
             // Temporary textures
-            cmd.GetTemporaryRT(ShaderConstants._FullCoCTexture, GetStereoCompatibleDescriptor(m_Descriptor.width, m_Descriptor.height, GraphicsFormat.R8_UNorm), FilterMode.Bilinear);
+            cmd.GetTemporaryRT(ShaderConstants._FullCoCTexture, GetStereoCompatibleDescriptor(m_Descriptor.width / 2, m_Descriptor.height / 2, GraphicsFormat.R8_UNorm), FilterMode.Bilinear);
             cmd.GetTemporaryRT(ShaderConstants._PingTexture, GetStereoCompatibleDescriptor(wh, hh, GraphicsFormat.R16G16B16A16_SFloat), FilterMode.Bilinear);
             cmd.GetTemporaryRT(ShaderConstants._PongTexture, GetStereoCompatibleDescriptor(wh, hh, GraphicsFormat.R16G16B16A16_SFloat), FilterMode.Bilinear);
 

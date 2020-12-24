@@ -13,7 +13,7 @@ Shader "Hidden/Universal Render Pipeline/BokehDepthOfField"
         #include "Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/Common.hlsl"
 
         // Do not change this without changing PostProcessPass.PrepareBokehKernel()
-        #define SAMPLE_COUNT            42
+        #define SAMPLE_COUNT            15
 
         // Toggle this to reduce flickering - note that it will reduce overall bokeh energy and add
         // a small cost to the pre-filtering pass
