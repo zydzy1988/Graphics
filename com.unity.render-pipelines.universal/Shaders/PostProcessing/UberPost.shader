@@ -2,13 +2,14 @@ Shader "Hidden/Universal Render Pipeline/UberPost"
 {
     HLSLINCLUDE
         
-        #pragma multi_compile_local _ _DISTORTION
-        #pragma multi_compile_local _ _CHROMATIC_ABERRATION
-        #pragma multi_compile_local _ _BLOOM_LQ _BLOOM_HQ _BLOOM_LQ_DIRT _BLOOM_HQ_DIRT
-        #pragma multi_compile_local _ _HDR_GRADING _TONEMAP_ACES _TONEMAP_NEUTRAL
-        #pragma multi_compile_local _ _FILM_GRAIN
-        #pragma multi_compile_local _ _DITHERING
+        // #pragma multi_compile_local _ _DISTORTION
+        // #pragma multi_compile_local _ _CHROMATIC_ABERRATION
+        // #pragma multi_compile_local _ _BLOOM_LQ _BLOOM_HQ _BLOOM_LQ_DIRT _BLOOM_HQ_DIRT
+        // #pragma multi_compile_local _ _HDR_GRADING _TONEMAP_ACES _TONEMAP_NEUTRAL
+        // #pragma multi_compile_local _ _FILM_GRAIN
+        // #pragma multi_compile_local _ _DITHERING
 		#pragma multi_compile_local _ _LINEAR_TO_SRGB_CONVERSION
+        #pragma multi_compile_local _ _BLOOM_LQ
 
         #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
         #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Filtering.hlsl"
@@ -16,11 +17,14 @@ Shader "Hidden/Universal Render Pipeline/UberPost"
         #include "Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/Common.hlsl"
 
         // Hardcoded dependencies to reduce the number of variants
-        #if _BLOOM_LQ || _BLOOM_HQ || _BLOOM_LQ_DIRT || _BLOOM_HQ_DIRT
+        // #if _BLOOM_LQ || _BLOOM_HQ || _BLOOM_LQ_DIRT || _BLOOM_HQ_DIRT
+        //     #define BLOOM
+        //     #if _BLOOM_LQ_DIRT || _BLOOM_HQ_DIRT
+        //         #define BLOOM_DIRT
+        //     #endif
+        // #endif
+        #if _BLOOM_LQ
             #define BLOOM
-            #if _BLOOM_LQ_DIRT || _BLOOM_HQ_DIRT
-                #define BLOOM_DIRT
-            #endif
         #endif
 
         TEXTURE2D_X(_BlitTex);
