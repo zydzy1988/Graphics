@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: UniversalRenderPipelineEditorResources
   m_EditorClassIdentifier: 
   shaders:
-    autodeskInteractivePS: {fileID: 4800000, guid: 0e9d5a909a1f7e84882a534d0d11e49f,
+    autodeskInteractivePS: {fileID: -6465566751694194690, guid: 0e9d5a909a1f7e84882a534d0d11e49f,
       type: 3}
-    autodeskInteractiveTransparentPS: {fileID: 4800000, guid: 5c81372d981403744adbdda4433c9c11,
+    autodeskInteractiveTransparentPS: {fileID: -6465566751694194690, guid: 5c81372d981403744adbdda4433c9c11,
       type: 3}
-    autodeskInteractiveMaskedPS: {fileID: 4800000, guid: 80aa867ac363ac043847b06ad71604cd,
+    autodeskInteractiveMaskedPS: {fileID: -6465566751694194690, guid: 80aa867ac363ac043847b06ad71604cd,
       type: 3}
     terrainDetailLitPS: {fileID: 4800000, guid: f6783ab646d374f94b199774402a5144,
       type: 3}

@@ -280,6 +280,14 @@ namespace UnityEngine.Rendering.Universal
             if (!camera.TryGetCullingParameters(IsStereoEnabled(camera), out var cullingParameters))
                 return;
 
+            // UI Camera disable culling
+            if (cameraData.renderType == CameraRenderType.UI)
+            {
+                cullingParameters.cullingOptions = CullingOptions.None;
+                cullingParameters.shadowDistance = 0.0f;
+                cullingParameters.maximumVisibleLights = 0;
+            }
+
             SetupPerCameraShaderConstants(cameraData);
 
             ProfilingSampler sampler = (asset.debugLevel >= PipelineDebugLevel.Profiling) ? new ProfilingSampler(camera.name): _CameraProfilingSampler;
@@ -432,9 +440,13 @@ namespace UnityEngine.Rendering.Universal
 
         static void UpdateVolumeFramework(Camera camera, UniversalAdditionalCameraData additionalCameraData)
         {
+            // No need update for ui camera.
+            if (additionalCameraData != null && additionalCameraData.renderType == CameraRenderType.UI)
+                return;
+            
             // Default values when there's no additional camera data available
             LayerMask layerMask = 1; // "Default"
-            Transform trigger = camera.transform;
+            Transform trigger = null;
 
             if (additionalCameraData != null)
             {
@@ -581,7 +593,7 @@ namespace UnityEngine.Rendering.Universal
             else if (baseAdditionalCameraData != null)
             {
                 cameraData.volumeLayerMask = baseAdditionalCameraData.volumeLayerMask;
-                cameraData.volumeTrigger = baseAdditionalCameraData.volumeTrigger == null ? baseCamera.transform : baseAdditionalCameraData.volumeTrigger;
+                cameraData.volumeTrigger = baseAdditionalCameraData.volumeTrigger;
                 cameraData.isStopNaNEnabled = baseAdditionalCameraData.stopNaN && SystemInfo.graphicsShaderLevel >= 35;
                 cameraData.isDitheringEnabled = baseAdditionalCameraData.dithering;
                 cameraData.antialiasing = baseAdditionalCameraData.antialiasing;
@@ -672,7 +684,7 @@ namespace UnityEngine.Rendering.Universal
             {
                 cameraData.renderType = additionalCameraData.renderType;
                 cameraData.clearDepth = (additionalCameraData.renderType == CameraRenderType.Overlay) ? additionalCameraData.clearDepth : true;
-                cameraData.postProcessEnabled = additionalCameraData.renderPostProcessing;
+                cameraData.postProcessEnabled = additionalCameraData.renderPostProcessing && (additionalCameraData.renderType != CameraRenderType.UI);
                 cameraData.maxShadowDistance = (additionalCameraData.renderShadows) ? cameraData.maxShadowDistance : 0.0f;
                 cameraData.requiresDepthTexture = additionalCameraData.requiresDepthTexture;
                 cameraData.requiresOpaqueTexture = additionalCameraData.requiresColorTexture;
