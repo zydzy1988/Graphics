@@ -7,6 +7,7 @@ namespace UnityEngine.Rendering.Universal
         None,
         Neutral, // Neutral tonemapper
         ACES,    // ACES Filmic reference tonemapper (custom approximation)
+        REINHARD,// ReinHard
     }
 
     [Serializable, VolumeComponentMenu("Post-processing/Tonemapping")]

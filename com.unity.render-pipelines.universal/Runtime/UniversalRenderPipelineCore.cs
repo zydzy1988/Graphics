@@ -155,6 +155,7 @@ namespace UnityEngine.Rendering.Universal
         public static readonly string HDRGrading = "_HDR_GRADING";
         public static readonly string TonemapACES = "_TONEMAP_ACES";
         public static readonly string TonemapNeutral = "_TONEMAP_NEUTRAL";
+        public static readonly string TonemapReinHard = "_TONEMAP_REINHARD";
         public static readonly string FilmGrain = "_FILM_GRAIN";
         public static readonly string Fxaa = "_FXAA";
         public static readonly string Dithering = "_DITHERING";

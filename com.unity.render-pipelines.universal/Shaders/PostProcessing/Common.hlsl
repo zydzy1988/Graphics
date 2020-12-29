@@ -96,6 +96,8 @@ half3 ApplyTonemap(half3 input)
     input = AcesTonemap(aces);
 #elif _TONEMAP_NEUTRAL
     input = NeutralTonemap(input);
+#elif _TONEMAP_REINHARD
+    input /= input + 1.0;
 #endif
 
     return saturate(input);

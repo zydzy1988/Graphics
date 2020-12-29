@@ -151,17 +151,19 @@ namespace UnityEngine.Rendering.Universal.Internal
             material.SetTexture(ShaderConstants._CurveSatVsSat, curves.satVsSat.value.GetTexture());
 
             // Tonemapping (baked into the lut for HDR)
+            /*
             if (hdr)
             {
+            */
                 material.shaderKeywords = null;
-
                 switch (tonemapping.mode.value)
                 {
                     case TonemappingMode.Neutral: material.EnableKeyword(ShaderKeywordStrings.TonemapNeutral); break;
                     case TonemappingMode.ACES: material.EnableKeyword(ShaderKeywordStrings.TonemapACES); break;
+                    case TonemappingMode.REINHARD: material.EnableKeyword(ShaderKeywordStrings.TonemapReinHard); break;
                     default: break; // None
                 }
-            }
+            //}
 
             // Render the lut
             Blit(cmd, m_InternalLut.id, m_InternalLut.id, material);

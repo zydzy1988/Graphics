@@ -188,15 +188,16 @@ Shader "Hidden/Universal Render Pipeline/UberPost"
             // don't like these but if we're running Uber it means we're running more expensive
             // effects anyway. Lower-end devices would limit themselves to on-tile compatible effect
             // and thus this shouldn't too much of a problem (famous last words).
-            UNITY_BRANCH
-            if (VignetteIntensity > 0)
-            {
-                color = ApplyVignette(color, uvDistorted, VignetteCenter, VignetteIntensity, VignetteRoundness, VignetteSmoothness, VignetteColor);
-            }
+            // UNITY_BRANCH
+            // if (VignetteIntensity > 0)
+            // {
+            //     color = ApplyVignette(color, uvDistorted, VignetteCenter, VignetteIntensity, VignetteRoundness, VignetteSmoothness, VignetteColor);
+            // }
 
             // Color grading is always enabled when post-processing/uber is active
             {
-                color = ApplyColorGrading(color, PostExposure, TEXTURE2D_ARGS(_InternalLut, sampler_LinearClamp), LutParams, TEXTURE2D_ARGS(_UserLut, sampler_LinearClamp), UserLutParams, UserLutContribution);
+                // color = ApplyColorGrading(color, PostExposure, TEXTURE2D_ARGS(_InternalLut, sampler_LinearClamp), LutParams, TEXTURE2D_ARGS(_UserLut, sampler_LinearClamp), UserLutParams, UserLutContribution);
+                color = ApplyLut2D(TEXTURE2D_ARGS(_InternalLut, sampler_LinearClamp), saturate(color), LutParams);
             }
 
             #if _FILM_GRAIN
