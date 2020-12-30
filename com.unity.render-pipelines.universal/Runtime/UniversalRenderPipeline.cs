@@ -227,7 +227,7 @@ namespace UnityEngine.Rendering.Universal
                     //It should be called before culling to prepare material. When there isn't any VisualEffect component, this method has no effect.
                     VFX.VFXManager.PrepareCamera(camera);
 #endif
-                    UpdateVolumeFramework(camera, null);
+                    // UpdateVolumeFramework(camera, null);
 
                     RenderSingleCamera(renderContext, camera);
                     EndCameraRendering(renderContext, camera);
@@ -402,7 +402,7 @@ namespace UnityEngine.Rendering.Universal
             //It should be called before culling to prepare material. When there isn't any VisualEffect component, this method has no effect.
             VFX.VFXManager.PrepareCamera(baseCamera);
 #endif
-            UpdateVolumeFramework(baseCamera, baseCameraAdditionalData);
+            // UpdateVolumeFramework(baseCamera, baseCameraAdditionalData);
             InitializeCameraData(baseCamera, baseCameraAdditionalData, out var baseCameraData);
             RenderSingleCamera(context, baseCameraData, !isStackedRendering, anyPostProcessingEnabled);
             EndCameraRendering(context, baseCamera);
@@ -430,7 +430,7 @@ namespace UnityEngine.Rendering.Universal
                     //It should be called before culling to prepare material. When there isn't any VisualEffect component, this method has no effect.
                     VFX.VFXManager.PrepareCamera(currCamera);
 #endif
-                    UpdateVolumeFramework(currCamera, currCameraData);
+                    // UpdateVolumeFramework(currCamera, currCameraData);
                     InitializeAdditionalCameraData(currCamera, currCameraData, ref overlayCameraData);
                     RenderSingleCamera(context, overlayCameraData, lastCamera, anyPostProcessingEnabled);
                     EndCameraRendering(context, currCamera);
