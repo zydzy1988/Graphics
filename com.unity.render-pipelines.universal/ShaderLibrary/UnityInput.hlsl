@@ -28,8 +28,7 @@
 #define _WorldSpaceCameraPos unity_StereoWorldSpaceCameraPos[unity_StereoEyeIndex]
 #endif
 
-float4 _AmbientColor;
-#define UNITY_LIGHTMODEL_AMBIENT (_AmbientColor)
+#define UNITY_LIGHTMODEL_AMBIENT (glstate_lightmodel_ambient * 2)
 
 // ----------------------------------------------------------------------------
 
@@ -39,6 +38,7 @@ float4 _SinTime; // sin(t/8), sin(t/4), sin(t/2), sin(t)
 float4 _CosTime; // cos(t/8), cos(t/4), cos(t/2), cos(t)
 float4 unity_DeltaTime; // dt, 1/dt, smoothdt, 1/smoothdt
 float4 _TimeParameters; // t, sin(t), cos(t)
+float4 _AmbientColor;
 
 #if !defined(USING_STEREO_MATRICES)
 float3 _WorldSpaceCameraPos;
