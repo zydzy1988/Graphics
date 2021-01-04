@@ -60,6 +60,8 @@ namespace UnityEngine.Rendering.Universal
             get => m_ClearColor;
         }
 
+        public bool needMRT => m_NeedMRT;
+
         internal int eyeIndex { get; set; }
 
         internal bool overrideCameraTarget { get; set; }
@@ -69,6 +71,7 @@ namespace UnityEngine.Rendering.Universal
         RenderTargetIdentifier m_DepthAttachment = BuiltinRenderTextureType.CameraTarget;
         ClearFlag m_ClearFlag = ClearFlag.None;
         Color m_ClearColor = Color.black;
+        bool m_NeedMRT = false;
 
         public ScriptableRenderPass()
         {
@@ -77,6 +80,7 @@ namespace UnityEngine.Rendering.Universal
             m_DepthAttachment = BuiltinRenderTextureType.CameraTarget;
             m_ClearFlag = ClearFlag.None;
             m_ClearColor = Color.black;
+            m_NeedMRT = false;
             overrideCameraTarget = false;
             isBlitRenderPass = false;
             eyeIndex = 0;
@@ -112,6 +116,7 @@ namespace UnityEngine.Rendering.Universal
 
             m_ColorAttachments = colorAttachments;
             m_DepthAttachment = depthAttachment;
+            m_NeedMRT = RenderingUtils.IsMRT(m_ColorAttachments);
         }
 
         /// <summary>
@@ -127,6 +132,7 @@ namespace UnityEngine.Rendering.Universal
             m_ColorAttachments[0] = colorAttachment;
             for (int i = 1; i < m_ColorAttachments.Length; ++i)
                 m_ColorAttachments[i] = 0;
+            m_NeedMRT = false;
         }
 
         /// <summary>

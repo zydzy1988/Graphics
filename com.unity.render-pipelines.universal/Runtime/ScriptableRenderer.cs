@@ -490,7 +490,7 @@ namespace UnityEngine.Rendering.Universal
             ClearFlag cameraClearFlag = GetCameraClearFlag(ref cameraData);
 
             // We use a different code path for MRT since it calls a different version of API SetRenderTarget
-            if (RenderingUtils.IsMRT(renderPass.colorAttachments))
+            if (renderPass.needMRT)
             {
                 // In the MRT path we assume that all color attachments are REAL color attachments,
                 // and that the depth attachment is a REAL depth attachment too.
