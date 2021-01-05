@@ -14,13 +14,12 @@ Shader "Hidden/Universal Render Pipeline/GaussianDepthOfField"
         #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Filtering.hlsl"
         #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
         #include "Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/Common.hlsl"
+        #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
 
         TEXTURE2D_X(_MainTex);
         TEXTURE2D_X(_ColorTexture);
         TEXTURE2D_X(_FullCoCTexture);
         TEXTURE2D_X(_HalfCoCTexture);
-
-        TEXTURE2D_X_FLOAT(_CameraDepthTexture);
 
         float4 _MainTex_TexelSize;
         float4 _ColorTexture_TexelSize;
