@@ -131,6 +131,46 @@ namespace UnityEngine.Rendering.Universal
             CoreUtils.Destroy(m_ScreenspaceShadowsMaterial);
         }
 
+        public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
+        {
+            // Special path for UI Camera
+            if (renderingData.cameraData.renderType == CameraRenderType.UI)
+            {
+                ref CameraData cameraData = ref renderingData.cameraData;
+                Camera camera = cameraData.camera;
+                CommandBuffer setRenderStateCmd = CommandBufferPool.Get(k_SetCameraRenderStateTag);
+
+                // Set Render State
+                context.SetupCameraProperties(camera, false, 0);
+
+#if UNITY_EDITOR
+                float time = Application.isPlaying ? Time.time : Time.realtimeSinceStartup;
+#else
+                float time = Time.time;
+#endif
+                float deltaTime = Time.deltaTime;
+                float smoothDeltaTime = Time.smoothDeltaTime;
+                SetShaderTimeValues(time, deltaTime, smoothDeltaTime, setRenderStateCmd);
+                context.ExecuteCommandBuffer(setRenderStateCmd);
+                CommandBufferPool.Release(setRenderStateCmd);
+
+                // Draw UI
+                ExecuteRenderPass(context, m_RenderOpaqueForwardPass, ref renderingData, 0);
+                ExecuteRenderPass(context, m_RenderTransparentForwardPass, ref renderingData, 0);
+
+                // Release
+                CommandBuffer releaseCmd = CommandBufferPool.Get(k_ReleaseResourcesTag);
+                m_RenderOpaqueClipDepthForwardPass.FrameCleanup(releaseCmd);
+                m_RenderTransparentForwardPass.FrameCleanup(releaseCmd);
+
+                context.ExecuteCommandBuffer(releaseCmd);
+                CommandBufferPool.Release(releaseCmd);
+                return;
+            }
+
+            base.Execute(context, ref renderingData);
+        }
+
         /// <inheritdoc />
         public override void Setup(ScriptableRenderContext context, ref RenderingData renderingData)
         {
@@ -162,8 +202,6 @@ namespace UnityEngine.Rendering.Universal
             {
                 var camTargetId = RenderTargetHandle.CameraTarget.Identifier();
                 ConfigureCameraTarget(camTargetId, camTargetId);
-                EnqueuePass(m_RenderOpaqueForwardPass);
-                EnqueuePass(m_RenderTransparentForwardPass);
                 return;
             }
 
