@@ -160,7 +160,7 @@ namespace UnityEngine.Rendering.Universal
 
                 // Release
                 CommandBuffer releaseCmd = CommandBufferPool.Get(k_ReleaseResourcesTag);
-                m_RenderOpaqueClipDepthForwardPass.FrameCleanup(releaseCmd);
+                m_RenderOpaqueForwardPass.FrameCleanup(releaseCmd);
                 m_RenderTransparentForwardPass.FrameCleanup(releaseCmd);
 
                 context.ExecuteCommandBuffer(releaseCmd);
@@ -357,7 +357,7 @@ namespace UnityEngine.Rendering.Universal
             EnqueuePass(m_RenderTransparentForwardPass);
 
             // Clip depth pass need depth texture to work.
-            if (requiresDepthTexture) EnqueuePass(m_RenderOpaqueClipDepthForwardPass);
+            if (requiresDepthTexture && UniversalRenderPipeline.asset.supportsCameraDepthTexture) EnqueuePass(m_RenderOpaqueClipDepthForwardPass);
             EnqueuePass(m_RenderTransparentAfterClipDepthFowardPass);
             EnqueuePass(m_OnRenderObjectCallbackPass);
 
