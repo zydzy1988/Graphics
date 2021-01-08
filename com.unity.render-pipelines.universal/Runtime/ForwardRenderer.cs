@@ -157,6 +157,16 @@ namespace UnityEngine.Rendering.Universal
                 return;
             }
 
+            // Special path for UI Camera
+            if (renderingData.cameraData.renderType == CameraRenderType.UI)
+            {
+                var camTargetId = RenderTargetHandle.CameraTarget.Identifier();
+                ConfigureCameraTarget(camTargetId, camTargetId);
+                EnqueuePass(m_RenderOpaqueForwardPass);
+                EnqueuePass(m_RenderTransparentForwardPass);
+                return;
+            }
+
             // Should apply post-processing after rendering this camera?
             bool applyPostProcessing = cameraData.postProcessEnabled;
             // There's at least a camera in the camera stack that applies post-processing
@@ -201,15 +211,12 @@ namespace UnityEngine.Rendering.Universal
             bool createColorTexture = RequiresIntermediateColorTexture(ref renderingData, cameraTargetDescriptor) ||
                 (rendererFeatures.Count != 0 && !isRunningHololens);
 
-            if (cameraData.renderType == CameraRenderType.UI)
-                createColorTexture = false;
-
             // If camera requires depth and there's no depth pre-pass we create a depth texture that can be read later by effect requiring it.
             bool createDepthTexture = cameraData.requiresDepthTexture && !requiresDepthPrepass;
             createDepthTexture |= (renderingData.cameraData.renderType == CameraRenderType.Base && !renderingData.resolveFinalTarget);
 
             // Configure all settings require to start a new camera stack (base camera only)
-            if (cameraData.renderType == CameraRenderType.Base || cameraData.renderType == CameraRenderType.UI)
+            if (cameraData.renderType == CameraRenderType.Base)
             {
                 m_ActiveCameraColorAttachment = (createColorTexture) ? m_CameraColorAttachment : RenderTargetHandle.CameraTarget;
                 m_ActiveCameraDepthAttachment = (createDepthTexture) ? m_CameraDepthAttachment : RenderTargetHandle.CameraTarget;
@@ -225,7 +232,7 @@ namespace UnityEngine.Rendering.Universal
                 int backbufferMsaaSamples = (intermediateRenderTexture) ? 1 : cameraTargetDescriptor.msaaSamples;
 
                 if (Camera.main == camera && camera.cameraType == CameraType.Game && cameraData.targetTexture == null)
-                SetupBackbufferFormat(backbufferMsaaSamples, isStereoEnabled);
+                    SetupBackbufferFormat(backbufferMsaaSamples, isStereoEnabled);
             }
             else
             {
@@ -268,8 +275,7 @@ namespace UnityEngine.Rendering.Universal
             }
 
             EnqueuePass(m_RenderOpaqueForwardPass);
-            if (cameraData.renderType != CameraRenderType.UI)
-                EnqueuePass(m_RenderOpaqueOutlineForwardPass);
+            EnqueuePass(m_RenderOpaqueOutlineForwardPass);
 
 #if POST_PROCESSING_STACK_2_0_0_OR_NEWER
 #pragma warning disable 0618 // Obsolete
@@ -285,7 +291,7 @@ namespace UnityEngine.Rendering.Universal
 #pragma warning restore 0618
 #endif
 
-            bool noNeedDrawSkyBoxCamera = cameraData.renderType == CameraRenderType.Overlay || cameraData.renderType == CameraRenderType.UI;
+            bool noNeedDrawSkyBoxCamera = cameraData.renderType == CameraRenderType.Overlay;
             if (camera.clearFlags == CameraClearFlags.Skybox && RenderSettings.skybox != null && !noNeedDrawSkyBoxCamera)
                 EnqueuePass(m_DrawSkyboxPass);
 
@@ -312,13 +318,9 @@ namespace UnityEngine.Rendering.Universal
 
             EnqueuePass(m_RenderTransparentForwardPass);
 
-            if (cameraData.renderType != CameraRenderType.UI)
-            {
-                // Clip depth pass need depth texture to work.
-                if (requiresDepthTexture)
-                    EnqueuePass(m_RenderOpaqueClipDepthForwardPass);
-                EnqueuePass(m_RenderTransparentAfterClipDepthFowardPass);
-            }
+            // Clip depth pass need depth texture to work.
+            if (requiresDepthTexture) EnqueuePass(m_RenderOpaqueClipDepthForwardPass);
+            EnqueuePass(m_RenderTransparentAfterClipDepthFowardPass);
             EnqueuePass(m_OnRenderObjectCallbackPass);
 
             bool lastCameraInTheStack = renderingData.resolveFinalTarget;
@@ -449,6 +451,8 @@ namespace UnityEngine.Rendering.Universal
         /// <inheritdoc />
         public override void SetupLights(ScriptableRenderContext context, ref RenderingData renderingData)
         {
+            if (renderingData.cameraData.renderType == CameraRenderType.UI)
+                return;
             m_ForwardLights.Setup(context, ref renderingData);
         }
 
