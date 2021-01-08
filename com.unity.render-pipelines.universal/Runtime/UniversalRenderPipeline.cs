@@ -108,6 +108,37 @@ namespace UnityEngine.Rendering.Universal
             get => 8;
         }
 
+        private static RenderingData s_UIRenderingData = new RenderingData()
+        {
+            lightData = new LightData()
+            {
+                mainLightIndex = -1,
+                additionalLightsCount = 0,
+                maxPerObjectAdditionalLightsCount = 0,
+                shadeAdditionalLightsPerVertex = false,
+                supportsMixedLighting = false,
+            },
+
+            shadowData = new ShadowData()
+            {
+                supportsMainLightShadows = false,
+                supportsAdditionalLightShadows = false,
+                requiresScreenSpaceShadowResolve = false
+            },
+
+            postProcessingData = new PostProcessingData()
+            {
+                gradingMode = ColorGradingMode.LowDynamicRange,
+                lutSize = 32
+            },
+
+            perObjectData = PerObjectData.None,
+            postProcessingEnabled = false,
+#pragma warning disable // avoid warning because killAlphaInFinalBlit has attribute Obsolete
+            killAlphaInFinalBlit = false,
+#pragma warning restore
+        };
+
         public UniversalRenderPipeline(UniversalRenderPipelineAsset asset)
         {
             SetSupportedRenderingFeatures();
@@ -280,14 +311,6 @@ namespace UnityEngine.Rendering.Universal
             if (!camera.TryGetCullingParameters(IsStereoEnabled(camera), out var cullingParameters))
                 return;
 
-            // UI Camera disable culling
-            if (cameraData.renderType == CameraRenderType.UI)
-            {
-                cullingParameters.cullingOptions = CullingOptions.None;
-                cullingParameters.shadowDistance = 0.0f;
-                cullingParameters.maximumVisibleLights = 0;
-            }
-
             SetupPerCameraShaderConstants(cameraData);
 
             ProfilingSampler sampler = (asset.debugLevel >= PipelineDebugLevel.Profiling) ? new ProfilingSampler(camera.name): _CameraProfilingSampler;
@@ -309,10 +332,19 @@ namespace UnityEngine.Rendering.Universal
 #endif
 
                 var cullResults = context.Cull(ref cullingParameters);
-                InitializeRenderingData(asset, ref cameraData, ref cullResults, requiresBlitToBackbuffer, anyPostProcessingEnabled, out var renderingData);
 
-                renderer.Setup(context, ref renderingData);
-                renderer.Execute(context, ref renderingData);
+                if (cameraData.renderType == CameraRenderType.UI)
+                {
+                    InitializeRenderingDataForUICamera(asset, ref cameraData, ref cullResults, requiresBlitToBackbuffer);
+                    renderer.Setup(context, ref s_UIRenderingData);
+                    renderer.Execute(context, ref s_UIRenderingData);
+                }
+                else
+                {
+                    InitializeRenderingData(asset, ref cameraData, ref cullResults, requiresBlitToBackbuffer, anyPostProcessingEnabled, out var renderingData);
+                    renderer.Setup(context, ref renderingData);
+                    renderer.Execute(context, ref renderingData);
+                }
             }
 
             context.ExecuteCommandBuffer(cmd);
@@ -730,6 +762,15 @@ namespace UnityEngine.Rendering.Universal
             cameraData.requiresDepthTexture |= cameraData.isSceneViewCamera || depthRequiredForPostFX;
         }
 
+        static void InitializeRenderingDataForUICamera(UniversalRenderPipelineAsset settings, ref CameraData cameraData, ref CullingResults cullResults,
+            bool requiresBlitToBackbuffer)
+        {
+            s_UIRenderingData.cullResults = cullResults;
+            s_UIRenderingData.cameraData = cameraData;
+            s_UIRenderingData.supportsDynamicBatching = settings.supportsDynamicBatching;
+            s_UIRenderingData.resolveFinalTarget = requiresBlitToBackbuffer;
+        }
+
         static void InitializeRenderingData(UniversalRenderPipelineAsset settings, ref CameraData cameraData, ref CullingResults cullResults,
             bool requiresBlitToBackbuffer, bool anyPostProcessingEnabled, out RenderingData renderingData)
         {
@@ -744,6 +785,8 @@ namespace UnityEngine.Rendering.Universal
                 mainLightCastShadows = (mainLightIndex != -1 && visibleLights[mainLightIndex].light != null &&
                                         visibleLights[mainLightIndex].light.shadows != LightShadows.None);
 
+                // Disable additional light cast shadow.
+                /*
                 // If additional lights are shaded per-pixel they cannot cast shadows
                 if (settings.additionalLightsRenderingMode == LightRenderingMode.PerPixel)
                 {
@@ -762,6 +805,7 @@ namespace UnityEngine.Rendering.Universal
                         }
                     }
                 }
+                */
             }
 
             renderingData.cullResults = cullResults;

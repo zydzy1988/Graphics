@@ -456,6 +456,14 @@ namespace UnityEngine.Rendering.Universal
         public override void SetupCullingParameters(ref ScriptableCullingParameters cullingParameters,
             ref CameraData cameraData)
         {
+            if (cameraData.renderType == CameraRenderType.UI)
+            {
+                cullingParameters.cullingOptions = CullingOptions.None;
+                cullingParameters.shadowDistance = 0.0f;
+                cullingParameters.maximumVisibleLights = 0;
+                return;
+            }
+
             // TODO: PerObjectCulling also affect reflection probes. Enabling it for now.
             // if (asset.additionalLightsRenderingMode == LightRenderingMode.Disabled ||
             //     asset.maxAdditionalLightsCount == 0)

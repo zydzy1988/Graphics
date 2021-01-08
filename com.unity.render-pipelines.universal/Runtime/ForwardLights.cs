@@ -79,20 +79,32 @@ namespace UnityEngine.Rendering.Universal.Internal
 
         public void Setup(ScriptableRenderContext context, ref RenderingData renderingData)
         {
-            int additionalLightsCount = renderingData.lightData.additionalLightsCount;
-            bool additionalLightsPerVertex = renderingData.lightData.shadeAdditionalLightsPerVertex;
-            CommandBuffer cmd = CommandBufferPool.Get(k_SetupLightConstants);
-            SetupShaderLightConstants(cmd, ref renderingData);
+            if (renderingData.cameraData.renderType == CameraRenderType.UI)
+            {
+                CommandBuffer cmd = CommandBufferPool.Get(k_SetupLightConstants);
+                CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.AdditionalLightsVertex, false);
+                CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.AdditionalLightsPixel, false);
+                CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.MixedLightingSubtractive, false);
+                context.ExecuteCommandBuffer(cmd);
+                CommandBufferPool.Release(cmd);
+            }
+            else
+            {
+                int additionalLightsCount = renderingData.lightData.additionalLightsCount;
+                bool additionalLightsPerVertex = renderingData.lightData.shadeAdditionalLightsPerVertex;
+                CommandBuffer cmd = CommandBufferPool.Get(k_SetupLightConstants);
+                SetupShaderLightConstants(cmd, ref renderingData);
 
-            CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.AdditionalLightsVertex,
-                additionalLightsCount > 0 && additionalLightsPerVertex);
-            CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.AdditionalLightsPixel,
-                additionalLightsCount > 0 && !additionalLightsPerVertex);
-            CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.MixedLightingSubtractive,
-                renderingData.lightData.supportsMixedLighting &&
-                m_MixedLightingSetup == MixedLightingSetup.Subtractive);
-            context.ExecuteCommandBuffer(cmd);
-            CommandBufferPool.Release(cmd);
+                CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.AdditionalLightsVertex,
+                    additionalLightsCount > 0 && additionalLightsPerVertex);
+                CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.AdditionalLightsPixel,
+                    additionalLightsCount > 0 && !additionalLightsPerVertex);
+                CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.MixedLightingSubtractive,
+                    renderingData.lightData.supportsMixedLighting &&
+                    m_MixedLightingSetup == MixedLightingSetup.Subtractive);
+                context.ExecuteCommandBuffer(cmd);
+                CommandBufferPool.Release(cmd);
+            }
         }
 
         void InitializeLightConstants(NativeArray<VisibleLight> lights, int lightIndex, out Vector4 lightPos, out Vector4 lightColor, out Vector4 lightAttenuation, out Vector4 lightSpotDir, out Vector4 lightOcclusionProbeChannel)
