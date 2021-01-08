@@ -357,7 +357,7 @@ namespace UnityEngine.Rendering.Universal
             EnqueuePass(m_RenderTransparentForwardPass);
 
             // Clip depth pass need depth texture to work.
-            if (requiresDepthTexture && UniversalRenderPipeline.asset.supportsCameraDepthTexture) EnqueuePass(m_RenderOpaqueClipDepthForwardPass);
+            if (requiresDepthTexture) EnqueuePass(m_RenderOpaqueClipDepthForwardPass);
             EnqueuePass(m_RenderTransparentAfterClipDepthFowardPass);
             EnqueuePass(m_OnRenderObjectCallbackPass);
 
