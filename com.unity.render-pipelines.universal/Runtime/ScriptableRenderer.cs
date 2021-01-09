@@ -759,7 +759,7 @@ namespace UnityEngine.Rendering.Universal
         }
 
         [Conditional("UNITY_EDITOR")]
-        void DrawGizmos(ScriptableRenderContext context, Camera camera, GizmoSubset gizmoSubset)
+        protected void DrawGizmos(ScriptableRenderContext context, Camera camera, GizmoSubset gizmoSubset)
         {
 #if UNITY_EDITOR
             if (UnityEditor.Handles.ShouldRenderGizmos())

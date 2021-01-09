@@ -77,6 +77,19 @@ namespace UnityEngine.Rendering.Universal.Internal
             }
         }
 
+        public void LowEndSetup(ScriptableRenderContext context, ref RenderingData renderingData)
+        {
+            CommandBuffer cmd = CommandBufferPool.Get(k_SetupLightConstants);
+            SetupMainLightConstants(cmd, ref renderingData.lightData);
+
+            CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.AdditionalLightsVertex, false);
+            CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.AdditionalLightsPixel, false);
+            CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.MixedLightingSubtractive, false);
+
+            context.ExecuteCommandBuffer(cmd);
+            CommandBufferPool.Release(cmd);
+        }
+
         public void Setup(ScriptableRenderContext context, ref RenderingData renderingData)
         {
             int additionalLightsCount = renderingData.lightData.additionalLightsCount;
