@@ -155,12 +155,12 @@ namespace UnityEngine.Rendering.Universal
                 CommandBufferPool.Release(setRenderStateCmd);
 
                 // Draw UI
-                ExecuteRenderPass(context, m_RenderOpaqueForwardPass, ref renderingData, 0);
+                // ExecuteRenderPass(context, m_RenderOpaqueForwardPass, ref renderingData, 0);
                 ExecuteRenderPass(context, m_RenderTransparentForwardPass, ref renderingData, 0);
 
                 // Release
                 CommandBuffer releaseCmd = CommandBufferPool.Get(k_ReleaseResourcesTag);
-                m_RenderOpaqueForwardPass.FrameCleanup(releaseCmd);
+                // m_RenderOpaqueForwardPass.FrameCleanup(releaseCmd);
                 m_RenderTransparentForwardPass.FrameCleanup(releaseCmd);
 
                 context.ExecuteCommandBuffer(releaseCmd);
