@@ -785,8 +785,6 @@ namespace UnityEngine.Rendering.Universal
                 mainLightCastShadows = (mainLightIndex != -1 && visibleLights[mainLightIndex].light != null &&
                                         visibleLights[mainLightIndex].light.shadows != LightShadows.None);
 
-                // Disable additional light cast shadow.
-                /*
                 // If additional lights are shaded per-pixel they cannot cast shadows
                 if (settings.additionalLightsRenderingMode == LightRenderingMode.PerPixel)
                 {
@@ -805,7 +803,6 @@ namespace UnityEngine.Rendering.Universal
                         }
                     }
                 }
-                */
             }
 
             renderingData.cullResults = cullResults;
