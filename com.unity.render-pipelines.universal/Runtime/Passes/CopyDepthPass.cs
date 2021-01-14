@@ -29,10 +29,18 @@ namespace UnityEngine.Rendering.Universal.Internal
         /// </summary>
         /// <param name="source">Source Render Target</param>
         /// <param name="destination">Destination Render Targt</param>
-        public void Setup(RenderTargetHandle source, RenderTargetHandle destination)
+        public void Setup(RenderTargetHandle source, RenderTargetHandle destination, bool needFlip)
         {
             this.source = source;
             this.destination = destination;
+
+            if (m_CopyDepthMaterial != null)
+            {
+                if (needFlip)
+                    m_CopyDepthMaterial.EnableKeyword("_FlipUV");
+                else
+                    m_CopyDepthMaterial.DisableKeyword("_FlipUV");
+            }
         }
 
         public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor)

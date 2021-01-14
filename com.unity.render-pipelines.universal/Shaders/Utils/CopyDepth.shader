@@ -17,6 +17,7 @@ Shader "Hidden/Universal Render Pipeline/CopyDepth"
             #pragma fragment frag
 
             #pragma multi_compile _DEPTH_NO_MSAA _DEPTH_MSAA_2 _DEPTH_MSAA_4
+            #pragma multi_compile_local _ _FlipUV
 
             #include "Packages/com.unity.render-pipelines.universal/Shaders/Utils/CopyDepthPass.hlsl"
 

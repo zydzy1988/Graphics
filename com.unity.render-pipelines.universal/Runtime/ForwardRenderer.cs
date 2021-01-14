@@ -334,7 +334,7 @@ namespace UnityEngine.Rendering.Universal
             // If a depth texture was created we necessarily need to copy it, otherwise we could have render it to a renderbuffer
             if (!requiresDepthPrepass && renderingData.cameraData.requiresDepthTexture && createDepthTexture)
             {
-                m_CopyDepthPass.Setup(m_ActiveCameraDepthAttachment, m_DepthTexture);
+                m_CopyDepthPass.Setup(m_ActiveCameraDepthAttachment, m_DepthTexture, !createColorTexture && SystemInfo.graphicsUVStartsAtTop);
                 EnqueuePass(m_CopyDepthPass);
             }
 
