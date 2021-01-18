@@ -8,7 +8,7 @@ namespace UnityEngine.Rendering
     /// An Asset which holds a set of settings to use with a <see cref="Volume"/>.
     /// </summary>
     [HelpURL(Documentation.baseURLHDRP + Documentation.version + Documentation.subURL + "Volume-Profile" + Documentation.endURL)]
-    public sealed class VolumeProfile : ScriptableObject
+    public class VolumeProfile : ScriptableObject
     {
         /// <summary>
         /// A list of every setting that this Volume Profile stores.

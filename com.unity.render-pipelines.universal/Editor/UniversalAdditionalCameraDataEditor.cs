@@ -5,7 +5,7 @@ namespace UnityEditor.Rendering.Universal
     [CanEditMultipleObjects]
     // Disable the GUI for additional camera data
     [CustomEditor(typeof(UniversalAdditionalCameraData))]
-    class UniversalAdditionalCameraDataEditor : Editor
+    public class UniversalAdditionalCameraDataEditor : Editor
     {
         public override void OnInspectorGUI()
         {

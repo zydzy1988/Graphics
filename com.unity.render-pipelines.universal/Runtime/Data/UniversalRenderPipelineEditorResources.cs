@@ -61,7 +61,7 @@ namespace UnityEngine.Rendering.Universal
 
 #if UNITY_EDITOR
     [UnityEditor.CustomEditor(typeof(UniversalRenderPipelineEditorResources), true)]
-    class UniversalRenderPipelineEditorResourcesEditor : UnityEditor.Editor
+    public class UniversalRenderPipelineEditorResourcesEditor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {

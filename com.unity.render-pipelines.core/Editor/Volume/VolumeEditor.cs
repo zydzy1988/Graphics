@@ -4,7 +4,7 @@ using UnityEngine.Rendering;
 namespace UnityEditor.Rendering
 {
     [CustomEditor(typeof(Volume))]
-    sealed class VolumeEditor : Editor
+    public class VolumeEditor : Editor
     {
         SerializedProperty m_IsGlobal;
         SerializedProperty m_BlendRadius;

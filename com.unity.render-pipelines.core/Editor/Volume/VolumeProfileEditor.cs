@@ -3,7 +3,7 @@ using UnityEngine.Rendering;
 namespace UnityEditor.Rendering
 {
     [CustomEditor(typeof(VolumeProfile))]
-    sealed class VolumeProfileEditor : Editor
+    public class VolumeProfileEditor : Editor
     {
         VolumeComponentListEditor m_ComponentList;
 

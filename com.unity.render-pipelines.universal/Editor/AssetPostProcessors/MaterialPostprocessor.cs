@@ -48,6 +48,7 @@ namespace UnityEditor.Rendering.Universal
         {
             EditorApplication.update += () =>
             {
+                /*
                 if (Time.renderedFrameCount > 0)
                 {
                     bool fileExist = true;
@@ -79,6 +80,7 @@ namespace UnityEditor.Rendering.Universal
                     if (MaterialPostprocessor.s_NeedsSavingAssets)
                         MaterialPostprocessor.SaveAssetsToDisk();
                 }
+                */
             };
         }
     }
