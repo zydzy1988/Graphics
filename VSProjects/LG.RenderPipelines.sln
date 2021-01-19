@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30309.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LG.RenderPipelines.Editor", "LG.RenderPipelines.Editor.csproj", "{1A77E692-9155-61EB-11C5-AFC54F975B85}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LG.RenderPipelines.Runtime", "LG.RenderPipelines.Runtime.csproj", "{5FFE7E01-25B0-09B5-3FDE-E3E4999508CF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Editor|Any CPU = Editor|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1A77E692-9155-61EB-11C5-AFC54F975B85}.Editor|Any CPU.ActiveCfg = Editor|Any CPU
+		{1A77E692-9155-61EB-11C5-AFC54F975B85}.Editor|Any CPU.Build.0 = Editor|Any CPU
+		{1A77E692-9155-61EB-11C5-AFC54F975B85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A77E692-9155-61EB-11C5-AFC54F975B85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FFE7E01-25B0-09B5-3FDE-E3E4999508CF}.Editor|Any CPU.ActiveCfg = Editor|Any CPU
+		{5FFE7E01-25B0-09B5-3FDE-E3E4999508CF}.Editor|Any CPU.Build.0 = Editor|Any CPU
+		{5FFE7E01-25B0-09B5-3FDE-E3E4999508CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FFE7E01-25B0-09B5-3FDE-E3E4999508CF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2D40DDCA-E3D1-42F2-AFC9-EF709A173862}
+	EndGlobalSection
+EndGlobal

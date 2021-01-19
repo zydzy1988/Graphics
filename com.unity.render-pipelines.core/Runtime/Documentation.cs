@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("Unity.RenderPipelines.Core.Editor.Tests")]
+[assembly: InternalsVisibleTo("LG.RenderPipelines.Editor")]
 
 namespace UnityEngine.Rendering
 {
