@@ -27,6 +27,7 @@ namespace UnityEngine.Rendering.Universal
         TransparentSettingsPass m_TransparentSettingsPass;
         DrawObjectsPass m_RenderTransparentForwardPass;
         DrawObjectsPass m_RenderTransparentAfterClipDepthFowardPass;
+        DrawObjectsPass m_RenderTransparentAfterPostProcessingForwardPass;
         InvokeOnRenderObjectCallbackPass m_OnRenderObjectCallbackPass;
         PostProcessPass m_PostProcessPass;
         PostProcessPass m_FinalPostProcessPass;
@@ -90,6 +91,7 @@ namespace UnityEngine.Rendering.Universal
             m_RenderTransparentForwardPass = new DrawObjectsPass("Render Transparents", false, RenderPassEvent.BeforeRenderingTransparents, RenderQueueRange.transparent, data.transparentLayerMask, m_DefaultStencilState, stencilData.stencilReference);
             m_RenderOpaqueClipDepthForwardPass = new RenderObjectsPass("Render Clip Depth Opaques", RenderPassEvent.AfterRenderingTransparents, new string[] { "ClipDepth" }, RenderQueueType.Opaque, data.opaqueLayerMask, new RenderObjects.CustomCameraSettings { overrideCamera = false });
             m_RenderTransparentAfterClipDepthFowardPass = new DrawObjectsPass("Render Transparent After Clip Depth", false, RenderPassEvent.AfterRenderingTransparents, RenderQueueRange.transparent, data.transparentAfterClipDepthLayerMask, m_DefaultStencilState, stencilData.stencilReference);
+            m_RenderTransparentAfterPostProcessingForwardPass = new DrawObjectsPass("Render Transparent After PostProcessing", false, RenderPassEvent.BeforeRenderingPostProcessing + 1, RenderQueueRange.transparent, data.transparentAfterPostProcessingLayerMask, m_DefaultStencilState, stencilData.stencilReference);
             m_OnRenderObjectCallbackPass = new InvokeOnRenderObjectCallbackPass(RenderPassEvent.BeforeRenderingPostProcessing);
             m_PostProcessPass = new PostProcessPass(RenderPassEvent.BeforeRenderingPostProcessing, data.postProcessData, m_BlitMaterial);
             m_FinalPostProcessPass = new PostProcessPass(RenderPassEvent.AfterRendering + 1, data.postProcessData, m_BlitMaterial);
@@ -192,6 +194,7 @@ namespace UnityEngine.Rendering.Universal
                 EnqueuePass(m_DrawSkyboxPass);
                 EnqueuePass(m_RenderTransparentForwardPass);
                 EnqueuePass(m_RenderTransparentAfterClipDepthFowardPass);
+                EnqueuePass(m_RenderTransparentAfterPostProcessingForwardPass);
                 return;
             }
 
@@ -429,6 +432,8 @@ namespace UnityEngine.Rendering.Universal
                     Debug.Assert(applyPostProcessing || doSRGBConvertion, "This will do unnecessary blit!");
                     EnqueuePass(m_PostProcessPass);
                 }
+
+                EnqueuePass(m_RenderTransparentAfterPostProcessingForwardPass);
 
                 if (renderingData.cameraData.captureActions != null)
                 {
