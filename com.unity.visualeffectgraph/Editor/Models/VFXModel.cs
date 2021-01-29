@@ -11,6 +11,19 @@ namespace UnityEditor.VFX
 {
     class VFXObject : ScriptableObject
     {
+        //Explicitly disable the Reset option on all VFXObject
+        //Internal Reset() behavior leads to a dandling state in graph object
+        [MenuItem("CONTEXT/VFXObject/Reset", false)]
+        public static void DummyReset()
+        {
+        }
+
+        [MenuItem("CONTEXT/VFXObject/Reset", true)]
+        static bool ValidateDummyReset()
+        {
+            return false;
+        }
+
         public Action<VFXObject> onModified;
         void OnValidate()
         {
@@ -243,7 +256,7 @@ namespace UnityEditor.VFX
 
         public void SetSettingValue(string name, object value)
         {
-            SetSettingValue(name, value, true);         
+            SetSettingValue(name, value, true);
         }
 
         public void SetSettingValues(IEnumerable<KeyValuePair<string, object>> nameValues)
@@ -258,6 +271,7 @@ namespace UnityEditor.VFX
             if (hasChanged)
                 Invalidate(InvalidationCause.kSettingChanged);
         }
+
         protected void SetSettingValue(string name, object value, bool notify)
         {
             bool hasChanged = SetSettingValueAndReturnIfChanged(name, value);
@@ -287,7 +301,8 @@ namespace UnityEditor.VFX
 
         // Override this method to update other settings based on a setting modification
         // Use OnIvalidate with KSettingChanged and not this method to handle other side effects
-        protected virtual void OnSettingModified(VFXSetting setting) {}
+        protected virtual void OnSettingModified(VFXSetting setting) { }
+        public virtual IEnumerable<int> GetFilteredOutEnumerators(string name) { return null; }
 
         public virtual VFXSetting GetSetting(string name)
         {
@@ -330,7 +345,7 @@ namespace UnityEditor.VFX
                     return (attr.visibleFlags & flags) != 0 && !filteredOutSettings.Contains(f.Name);
                 }
                 return false;
-            }).Select(field => new VFXSetting(field,this));
+            }).Select(field => new VFXSetting(field, this));
         }
 
         static public VFXExpression ConvertSpace(VFXExpression input, VFXSlot targetSlot, VFXCoordinateSpace space)
@@ -431,7 +446,7 @@ namespace UnityEditor.VFX
         public static void RemoveModel(VFXModel model, bool notify = true)
         {
             VFXGraph graph = model.GetGraph();
-            if (graph != null)        
+            if (graph != null)
                 graph.UIInfos.Sanitize(graph); // Remove reference from groupInfos
             UnlinkModel(model);
             model.Detach(notify);

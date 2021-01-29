@@ -58,9 +58,6 @@ namespace UnityEngine.Rendering.Universal
             // Release command buffer
             CommandBuffer releaseCmd = CommandBufferPool.Get(k_ReleaseResourcesTag);
 
-            // Set Camera
-            context.SetupCameraProperties(camera, false, 0);
-
 #if UNITY_EDITOR
             float time = Application.isPlaying ? Time.time : Time.realtimeSinceStartup;
 #else
@@ -69,10 +66,14 @@ namespace UnityEngine.Rendering.Universal
             float deltaTime = Time.deltaTime;
             float smoothDeltaTime = Time.smoothDeltaTime;
 
-            // Set Time
-            SetShaderTimeValues(time, deltaTime, smoothDeltaTime, setRenderStateCmd);
+            // Initialize Render State
+            ClearRenderingState(setRenderStateCmd);
+            SetPerCameraShaderVariables(setRenderStateCmd, ref cameraData);
+            SetShaderTimeValues(setRenderStateCmd, time, deltaTime, smoothDeltaTime);
+            SetCameraMatrices(setRenderStateCmd, ref cameraData, true);
             context.ExecuteCommandBuffer(setRenderStateCmd);
             setRenderStateCmd.Clear();
+            context.SetupCameraProperties(camera, false, 0);
 
             // Special path for UI Camera
             if (renderingData.cameraData.renderType == CameraRenderType.UI)
@@ -90,10 +91,6 @@ namespace UnityEngine.Rendering.Universal
             }
 
             m_ForwardLights.LowEndSetup(context, ref renderingData);
-            if (cameraData.renderType == CameraRenderType.Overlay)
-            {
-                setRenderStateCmd.SetViewProjectionMatrices(cameraData.viewMatrix, cameraData.projectionMatrix);
-            }
 
             // Draw objects
             ExecuteRenderPass(context, m_RenderOpaqueForwardPass, ref renderingData, 0);
@@ -112,7 +109,7 @@ namespace UnityEngine.Rendering.Universal
             context.ExecuteCommandBuffer(releaseCmd);
 
             // Happens when rendering the last camera in the camera stack.
-            if (renderingData.resolveFinalTarget)
+            if (cameraData.resolveFinalTarget)
             {
                 m_RenderOpaqueForwardPass.OnFinishCameraStackRendering(releaseCmd);
                 m_RenderTransparentForwardPass.OnFinishCameraStackRendering(releaseCmd);

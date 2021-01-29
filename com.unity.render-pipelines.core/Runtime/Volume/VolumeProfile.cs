@@ -7,8 +7,8 @@ namespace UnityEngine.Rendering
     /// <summary>
     /// An Asset which holds a set of settings to use with a <see cref="Volume"/>.
     /// </summary>
-    [HelpURL(Documentation.baseURLHDRP + Documentation.version + Documentation.subURL + "Volume-Profile" + Documentation.endURL)]
-    public class VolumeProfile : ScriptableObject
+    [HelpURL(Documentation.baseURLHDRP + Documentation.releaseVersion + Documentation.subURL + "Volume-Profile" + Documentation.endURL)]
+    public sealed class VolumeProfile : ScriptableObject
     {
         /// <summary>
         /// A list of every setting that this Volume Profile stores.
@@ -278,6 +278,37 @@ namespace UnityEngine.Rendering
             }
 
             return count != result.Count;
+        }
+
+
+        /// <summary>
+        /// A custom hashing function that Unity uses to compare the state of parameters.
+        /// </summary>
+        /// <returns>A computed hash code for the current instance.</returns>
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+
+                for (int i = 0; i < components.Count; i++)
+                    hash = hash * 23 + components[i].GetHashCode();
+
+                return hash;
+            }
+        }
+
+        internal int GetComponentListHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+
+                for (int i = 0; i < components.Count; i++)
+                    hash = hash * 23 + components[i].GetType().GetHashCode();
+
+                return hash;
+            }
         }
     }
 }
