@@ -69,14 +69,11 @@ Shader "Hidden/Universal Render Pipeline/Bloom"
             color = min(ClampMax, color);
 
             // Thresholding
-            half brightness = 0.2125 * color.r + 0.7154 * color.g + 0.0721 * color.b;
-            color *= saturate(brightness - Threshold);
-            
-            // half brightness = Max3(color.r, color.g, color.b);
-            // half softness = clamp(brightness - Threshold + ThresholdKnee, 0.0, 2.0 * ThresholdKnee);
-            // softness = (softness * softness) / (4.0 * ThresholdKnee + 1e-4);
-            // half multiplier = max(brightness - Threshold, softness) / max(brightness, 1e-4);
-            // color *= multiplier;
+            half brightness = Max3(color.r, color.g, color.b);
+            half softness = clamp(brightness - Threshold + ThresholdKnee, 0.0, 2.0 * ThresholdKnee);
+            softness = (softness * softness) / (4.0 * ThresholdKnee + 1e-4);
+            half multiplier = max(brightness - Threshold, softness) / max(brightness, 1e-4);
+            color *= multiplier;
 
             return EncodeHDR(color);
         }
