@@ -9,18 +9,23 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LG.RenderPipelines.Runtime"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Android|Any CPU = Android|Any CPU
 		Editor|Any CPU = Editor|Any CPU
-		Release|Any CPU = Release|Any CPU
+		IOS|Any CPU = IOS|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1A77E692-9155-61EB-11C5-AFC54F975B85}.Android|Any CPU.ActiveCfg = Editor|Any CPU
+		{1A77E692-9155-61EB-11C5-AFC54F975B85}.Android|Any CPU.Build.0 = Editor|Any CPU
 		{1A77E692-9155-61EB-11C5-AFC54F975B85}.Editor|Any CPU.ActiveCfg = Editor|Any CPU
 		{1A77E692-9155-61EB-11C5-AFC54F975B85}.Editor|Any CPU.Build.0 = Editor|Any CPU
-		{1A77E692-9155-61EB-11C5-AFC54F975B85}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1A77E692-9155-61EB-11C5-AFC54F975B85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A77E692-9155-61EB-11C5-AFC54F975B85}.IOS|Any CPU.ActiveCfg = Editor|Any CPU
+		{1A77E692-9155-61EB-11C5-AFC54F975B85}.IOS|Any CPU.Build.0 = Editor|Any CPU
+		{5FFE7E01-25B0-09B5-3FDE-E3E4999508CF}.Android|Any CPU.ActiveCfg = Android|Any CPU
+		{5FFE7E01-25B0-09B5-3FDE-E3E4999508CF}.Android|Any CPU.Build.0 = Android|Any CPU
 		{5FFE7E01-25B0-09B5-3FDE-E3E4999508CF}.Editor|Any CPU.ActiveCfg = Editor|Any CPU
 		{5FFE7E01-25B0-09B5-3FDE-E3E4999508CF}.Editor|Any CPU.Build.0 = Editor|Any CPU
-		{5FFE7E01-25B0-09B5-3FDE-E3E4999508CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5FFE7E01-25B0-09B5-3FDE-E3E4999508CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FFE7E01-25B0-09B5-3FDE-E3E4999508CF}.IOS|Any CPU.ActiveCfg = IOS|Any CPU
+		{5FFE7E01-25B0-09B5-3FDE-E3E4999508CF}.IOS|Any CPU.Build.0 = IOS|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
